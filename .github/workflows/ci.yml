@@ -24,4 +24,7 @@ jobs:
           moon version --all
           moon update
           moon install
+
+      - name: Test
+        run: |
           moon test
