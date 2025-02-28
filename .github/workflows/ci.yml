@@ -25,6 +25,6 @@ jobs:
           moon update
           moon install
 
-      - name: Test
+      - name: Run tests with coverage
         run: |
           moon test
