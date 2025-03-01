@@ -55,30 +55,39 @@ pub fn search(
   } else if text.is_empty() {
     return -1
   } else if start > end || start < 0 || end > text.length() {
-    raise InvalidRangeError("Invalid search range: ensure start <= end and both are within text bounds")
+    raise InvalidRangeError(
+      "Invalid search range: ensure start <= end and both are within text bounds",
+    )
   }
   match option {
-    "auto" => if auto(text.substring(start~, end~), pattern) != -1 {
-      return auto(text.substring(start~, end~), pattern) + start
-    } else {
-      return -1
-    }
-    "kmp" => if kmp(text.substring(start~, end~), pattern) != -1 {
-      return kmp(text.substring(start~, end~), pattern) + start
-    } else {
-      return -1
-    }
-  "rabin_karp" => if rabin_karp(text.substring(start~, end~), pattern) != -1 {
-      return rabin_karp(text.substring(start~, end~), pattern) + start
-    } else {
-      return -1
-    }
-    "boyer_moore" => if boyer_moore(text.substring(start~, end~), pattern) != -1 {
-      return boyer_moore(text.substring(start~, end~), pattern) + start
-    } else {
-      return -1
-    }
-    _ => raise OptionChooseError("Invalid search algorithm option. Available options: 'auto', 'kmp', 'rabin_karp', 'boyer_moore'")
+    "auto" =>
+      if auto(text.substring(start~, end~), pattern) != -1 {
+        return auto(text.substring(start~, end~), pattern) + start
+      } else {
+        return -1
+      }
+    "kmp" =>
+      if kmp(text.substring(start~, end~), pattern) != -1 {
+        return kmp(text.substring(start~, end~), pattern) + start
+      } else {
+        return -1
+      }
+    "rabin_karp" =>
+      if rabin_karp(text.substring(start~, end~), pattern) != -1 {
+        return rabin_karp(text.substring(start~, end~), pattern) + start
+      } else {
+        return -1
+      }
+    "boyer_moore" =>
+      if boyer_moore(text.substring(start~, end~), pattern) != -1 {
+        return boyer_moore(text.substring(start~, end~), pattern) + start
+      } else {
+        return -1
+      }
+    _ =>
+      raise OptionChooseError(
+        "Invalid search algorithm option. Available options: 'auto', 'kmp', 'rabin_karp', 'boyer_moore'",
+      )
   }
 }
 
