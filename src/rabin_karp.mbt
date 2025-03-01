@@ -5,7 +5,7 @@ enum Prework {
 }
 
 ///|
-pub(all) struct StringHash {
+pub struct StringHash {
   n : Int
   mod : Int64
   base : Int64
@@ -23,7 +23,7 @@ let empty_hash : StringHash = StringHash::{
 }
 
 ///|
-pub fn StringHash::new(
+fn StringHash::new(
   mod~ : Int64 = 998244353,
   base~ : Int64 = 131,
   s : String
@@ -44,11 +44,7 @@ pub fn StringHash::new(
 }
 
 ///|
-pub fn StringHash::get_hash(
-  self : StringHash,
-  left : Int,
-  right : Int
-) -> Int64 {
+fn StringHash::get_hash(self : StringHash, left : Int, right : Int) -> Int64 {
   let p = match self.prework {
     Util(p~) => p
     Nil => []
