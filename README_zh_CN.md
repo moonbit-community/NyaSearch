@@ -31,18 +31,18 @@ NyaSearch 提供了一个 **强大且灵活的字符串搜索功能**，支持�
 
 ### **🔍 基本用法**
 
-最简单的用法是调用 `search!`，它会 **自动选择最优算法**。
+最简单的用法是调用 `search`，它会 **自动选择最优算法**。
 
 ```moonbit
-@nyasearch.search!("hello world", "world") // 返回：6，使用最佳算法
+@NyaSearch.search?("hello world", "world") // 返回：Ok(6)，使用最佳算法
 ```
 
 如果你想 **手动选择算法**，只需提供 `option` 参数：
 
 ```moonbit
-@nyasearch.search!("hello world", "world", option="kmp")         // 返回：6，使用 KMP 方法
-@nyasearch.search!("hello world", "world", option="boyer_moore")   // 返回：6，使用 Boyer-Moore 方法
-@nyasearch.search!("hello world", "world", option="rabin_karp")      // 返回：6，使用 Rabin-Karp 方法
+@NyaSearch.search?("hello world", "world", option="kmp")         // 返回：Ok(6)，使用 KMP 方法
+@NyaSearch.search?("hello world", "world", option="boyer_moore")   // 返回：Ok(6)，使用 Boyer-Moore 方法
+@NyaSearch.search?("hello world", "world", option="rabin_karp")      // 返回：Ok(6)，使用 Rabin-Karp 方法
 ```
 
 ---
@@ -52,8 +52,8 @@ NyaSearch 提供了一个 **强大且灵活的字符串搜索功能**，支持�
 你可以通过提供 `start` 和 `end` 索引，在文本的特定部分内进行搜索。
 
 ```moonbit
-@nyasearch.search!("hello world", "o", start=0, end=5)  // 返回：4
-@nyasearch.search!("hello world", "o", start=5, end=11) // 返回：7
+@NyaSearch.search?("hello world", "o", start=0, end=5)  // 返回：Ok(4)
+@NyaSearch.search?("hello world", "o", start=5, end=11) // 返回：Ok(7)
 ```
 - `start` 索引 **包含**该位置的字符。
 - `end` 索引 **不包含**该位置的字符。
@@ -70,7 +70,7 @@ NyaSearch 的 **自动模式** 根据 **文本** 和 **模式** 的特性智能�
 - **字符唯一性**
 - **重复率**
 
-基于这些因素，`search!(..., option="auto")` 会动态选择最佳算法。
+基于这些因素，`search(..., option="auto")` 会动态选择最佳算法。
 
 ---
 
@@ -89,27 +89,27 @@ NyaSearch 的 **自动模式** 根据 **文本** 和 **模式** 的特性智能�
 
 ##### **1️⃣ 短模式或小文本 → 使用暴力搜索**
 ```moonbit
-search!("hello", "o")       // 使用暴力搜索
-search!("ab", "b")          // 使用暴力搜索
-search!("abcdefgh", "d")    // 使用暴力搜索
+search("hello", "o")       // 使用暴力搜索
+search("ab", "b")          // 使用暴力搜索
+search("abcdefgh", "d")    // 使用暴力搜索
 ```
 
 ##### **2️⃣ 长模式且具有大量唯一字符 → 使用 Boyer-Moore**
 ```moonbit
-search!("this is a very long text", "UNIQUEPATTERNXYZ")   // 使用 Boyer-Moore
-search!("random words here", "QWERTYASDFGHZXCVBNM")        // 使用 Boyer-Moore
+search("this is a very long text", "UNIQUEPATTERNXYZ")   // 使用 Boyer-Moore
+search("random words here", "QWERTYASDFGHZXCVBNM")        // 使用 Boyer-Moore
 ```
 
 ##### **3️⃣ 中等模式且重复率高 → 使用 KMP**
 ```moonbit
-search!("abababababababab", "ababab")       // 使用 KMP
-search!("aaaaaaaaaaabcaaaaaaa", "aaaaaa")     // 使用 KMP（高重复率）
+search("abababababababab", "ababab")       // 使用 KMP
+search("aaaaaaaaaaabcaaaaaaa", "aaaaaa")     // 使用 KMP（高重复率）
 ```
 
 ##### **4️⃣ 中等模式且重复率低 → 使用 Rabin-Karp**
 ```moonbit
-search!("abcdefgabcdefgabcdefg", "abcdef")   // 使用 Rabin-Karp（低重复率）
-search!("random_data_here", "xyz123")         // 使用 Rabin-Karp
+search("abcdefgabcdefgabcdefg", "abcdef")   // 使用 Rabin-Karp（低重复率）
+search("random_data_here", "xyz123")         // 使用 Rabin-Karp
 ```
 
 ---
@@ -144,15 +144,15 @@ let text = "The quick brown fox jumps over the lazy dog"
 let pattern = "fox"
 
 // 自动模式（默认）
-let index = @nyasearch.search!(text, pattern)
-print("找到位置:", index) // 返回：16
+let index = @NyaSearch.search?(text, pattern)
+print("找到位置:", index) // 返回：Ok(16)
 
 // 指定算法
-let index_kmp = @nyasearch.search!(text, pattern, option="kmp")
+let index_kmp = @NyaSearch.search?(text, pattern, option="kmp")
 print("KMP 查找到位置:", index_kmp)
 
 // 在范围内搜索
-let index_range = @nyasearch.search!(text, pattern, start=10, end=20)
+let index_range = @nyasearch.search?(text, pattern, start=10, end=20)
 print("范围搜索查找到位置:", index_range)
 ```
 

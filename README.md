@@ -29,18 +29,18 @@ NyaSearch provides a **powerful and flexible string search function** that suppo
 ---
 
 ### **🔍 Basic Usage**
-The simplest way to use `NyaSearch` is to call `search!`, which will **automatically select the most efficient algorithm** based on the pattern and text.
+The simplest way to use `NyaSearch` is to call `search`, which will **automatically select the most efficient algorithm** based on the pattern and text.
 
 ```moonbit
-@nyasearch.search!("hello world", "world") // Returns: 6, using the best algorithm
+@NyaSearch.search?("hello world", "world") // Returns: Ok(6), using the best algorithm
 ```
 
 If you want to **manually choose an algorithm**, simply provide the `option` parameter:
 
 ```moonbit
-@nyasearch.search!("hello world", "world", option="kmp") // Returns: 6, using the KMP method
-@nyasearch.search!("hello world", "world", option="boyer_moore") // Returns: 6, using Boyer-Moore
-@nyasearch.search!("hello world", "world", option="rabin_karp") // Returns: 6, using Rabin-Karp
+@NyaSearch.search?("hello world", "world", option="kmp") // Returns: Ok(6), using the KMP method
+@NyaSearch.search?("hello world", "world", option="boyer_moore") // Returns: Ok(6), using Boyer-Moore
+@NyaSearch.search?("hello world", "world", option="rabin_karp") // Returns: Ok(6), using Rabin-Karp
 ```
 
 ---
@@ -49,8 +49,8 @@ If you want to **manually choose an algorithm**, simply provide the `option` par
 You can **search within a specific part of the text** by providing `start` and `end` indices.
 
 ```moonbit
-@nyasearch.search!("hello world", "o", start=0, end=5) // Returns: 4
-@nyasearch.search!("hello world", "o", start=5, end=11) // Returns: 7
+@NyaSearch.search!("hello world", "o", start=0, end=5) // Returns: Ok(4)
+@NyaSearch.search!("hello world", "o", start=5, end=11) // Returns: Ok(7)
 ```
 - The `start` index **includes** the character at that position.
 - The `end` index **excludes** the character at that position.
@@ -66,7 +66,7 @@ It evaluates:
 - **Character uniqueness**
 - **Repetition ratio**
 
-Based on these factors, `search!(..., option="auto")` will choose the best algorithm dynamically.
+Based on these factors, `search(..., option="auto")` will choose the best algorithm dynamically.
 
 ---
 
@@ -84,27 +84,27 @@ Based on these factors, `search!(..., option="auto")` will choose the best algor
 #### **🎯 Examples**
 ##### **1️⃣ Short pattern or small text → Uses brute force**
 ```moonbit
-search!("hello", "o")  // Uses brute force
-search!("ab", "b")     // Uses brute force
-search!("abcdefgh", "d") // Uses brute force
+search("hello", "o")  // Uses brute force
+search("ab", "b")     // Uses brute force
+search("abcdefgh", "d") // Uses brute force
 ```
 
 ##### **2️⃣ Long pattern with many unique characters → Uses Boyer-Moore**
 ```moonbit
-search!("this is a very long text", "UNIQUEPATTERNXYZ") // Uses Boyer-Moore
-search!("random words here", "QWERTYASDFGHZXCVBNM") // Uses Boyer-Moore
+search("this is a very long text", "UNIQUEPATTERNXYZ") // Uses Boyer-Moore
+search("random words here", "QWERTYASDFGHZXCVBNM") // Uses Boyer-Moore
 ```
 
 ##### **3️⃣ Medium pattern with high repetition → Uses KMP**
 ```moonbit
-search!("abababababababab", "ababab") // Uses KMP
-search!("aaaaaaaaaaabcaaaaaaa", "aaaaaa") // Uses KMP (high repetition ratio)
+search("abababababababab", "ababab") // Uses KMP
+search("aaaaaaaaaaabcaaaaaaa", "aaaaaa") // Uses KMP (high repetition ratio)
 ```
 
 ##### **4️⃣ Medium pattern with low repetition → Uses Rabin-Karp**
 ```moonbit
-search!("abcdefgabcdefgabcdefg", "abcdef") // Uses Rabin-Karp (low repetition)
-search!("random_data_here", "xyz123") // Uses Rabin-Karp
+search("abcdefgabcdefgabcdefg", "abcdef") // Uses Rabin-Karp (low repetition)
+search("random_data_here", "xyz123") // Uses Rabin-Karp
 ```
 ---
 
@@ -136,15 +136,15 @@ let text = "The quick brown fox jumps over the lazy dog"
 let pattern = "fox"
 
 // Auto mode (default)
-let index = @nyasearch.search!(text, pattern)
-print("Found at:", index) // Found at: 16
+let index = @NyaSearch.search?(text, pattern)
+print("Found at:", index) // Found at: Ok(16)
 
 // Specify an algorithm
-let index_kmp = @nyasearch.search!(text, pattern, option="kmp")
+let index_kmp = @NyaSearch.search?(text, pattern, option="kmp")
 print("KMP found at:", index_kmp)
 
 // Search within a range
-let index_range = @nyasearch.search!(text, pattern, start=10, end=20)
+let index_range = @NyaSearch.search?(text, pattern, start=10, end=20)
 print("Range search found at:", index_range)
 ```
 
