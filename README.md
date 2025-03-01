@@ -20,7 +20,7 @@
 ## 📥 Installation
 
 ```
-
+moon add xunyoyo/NyaSearch
 ```
 
 ## **🚀 Usage Guide for `NyaSearch`**
