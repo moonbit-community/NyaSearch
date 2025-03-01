@@ -20,3 +20,12 @@
 ```
 
 ```
+
+## 📜 License
+This project is licensed under the Apache-2.0 License. See [LICENSE](https://github.com/moonbit-community/NyaSearch/blob/main/LICENSE) for details.
+
+## 📢 Contact & Support
++ Moonbit Community: [moonbit-community](https://github.com/moonbit-community)
++ GitHub Issues: [Report an issue](https://github.com/moonbit-community/NyaSearch/issues)
+
+👋 If you like this project, give it a ⭐! Happy coding! 🚀
