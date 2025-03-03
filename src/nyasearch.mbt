@@ -59,35 +59,21 @@ pub fn search(
       "Invalid search range: ensure start <= end and both are within text bounds",
     )
   }
-  match option {
-    "auto" =>
-      if auto(text.substring(start~, end~), pattern) != -1 {
-        return auto(text.substring(start~, end~), pattern) + start
-      } else {
-        return -1
-      }
-    "kmp" =>
-      if kmp(text.substring(start~, end~), pattern) != -1 {
-        return kmp(text.substring(start~, end~), pattern) + start
-      } else {
-        return -1
-      }
-    "rabin_karp" =>
-      if rabin_karp(text.substring(start~, end~), pattern) != -1 {
-        return rabin_karp(text.substring(start~, end~), pattern) + start
-      } else {
-        return -1
-      }
-    "boyer_moore" =>
-      if boyer_moore(text.substring(start~, end~), pattern) != -1 {
-        return boyer_moore(text.substring(start~, end~), pattern) + start
-      } else {
-        return -1
-      }
+  let subtext = text.substring(start~, end~)
+  let idx = match option {
+    "auto" => auto(subtext, pattern)
+    "kmp" => kmp(subtext, pattern)
+    "rabin_karp" => rabin_karp(subtext, pattern)
+    "boyer_moore" => boyer_moore(subtext, pattern)
     _ =>
       raise OptionChooseError(
         "Invalid search algorithm option. Available options: 'auto', 'kmp', 'rabin_karp', 'boyer_moore'",
       )
+  }
+  if idx == -1 {
+    -1
+  } else {
+    idx + start
   }
 }
 
