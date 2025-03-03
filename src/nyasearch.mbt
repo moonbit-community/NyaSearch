@@ -131,38 +131,3 @@ test "panic search/invalid_range" {
   ignore(search!("hello world", "world", start=-1, end=5))
   ignore(search!("hello world", "world", start=0, end=12))
 }
-
-///|
-fn auto(text : String, pattern : String) -> Int {
-  let text_len = text.length()
-  let pattern_len = pattern.length()
-  if pattern_len <= 2 || text_len <= 10 {
-    return brute_force(text, pattern)
-  }
-  let mut repeats = 0
-  let unique_chars = Set::new()
-  for i in 0..<pattern_len {
-    if unique_chars.contains(pattern[i]) {
-      repeats += 1
-    } else {
-      unique_chars.add(pattern[i])
-    }
-  }
-  let repeat_ratio = if pattern_len > 0 {
-    repeats.to_float() / pattern_len.to_float()
-  } else {
-    0.0
-  }
-  let alphabet_size = unique_chars.size()
-  if alphabet_size > 20 && pattern_len > 15 {
-    return boyer_moore(text, pattern)
-  }
-  if alphabet_size > 10 || pattern_len >= 8 {
-    if repeat_ratio > 0.3 {
-      return kmp(text, pattern)
-    } else {
-      return rabin_karp(text, pattern)
-    }
-  }
-  kmp(text, pattern)
-}
