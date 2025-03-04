@@ -4,6 +4,7 @@
 
 [![Build Status](https://img.shields.io/github/actions/workflow/status/moonbit-community/NyaSearch/ci.yml)](https://github.com/moonbit-community/NyaSearch/actions)
 [![License](https://img.shields.io/github/license/moonbit-community/NyaSearch)](LICENSE)
+[![codecov](https://codecov.io/gh/moonbit-community/NyaSearch/branch/main/graph/badge.svg)](https://codecov.io/gh/moonbit-community/NyaSearch)
 
 **NyaSearch** 是一个快速高效的文本搜索库，专为在大规模文本数据中执行子串匹配而设计。它支持多种搜索算法，适用于文本编辑器、日志分析和数据处理。
 

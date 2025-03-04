@@ -4,6 +4,7 @@
 
 [![Build Status](https://img.shields.io/github/actions/workflow/status/moonbit-community/NyaSearch/ci.yml)](https://github.com/moonbit-community/NyaSearch/actions)
 [![License](https://img.shields.io/github/license/moonbit-community/NyaSearch)](LICENSE)
+[![codecov](https://codecov.io/gh/moonbit-community/NyaSearch/branch/main/graph/badge.svg)](https://codecov.io/gh/moonbit-community/NyaSearch)
 
 
 **NyaSearch** is a fast and efficient text search library designed to perform substring matching in large-scale text data. It supports multiple search algorithms, making it suitable for text editors, log analysis, and data processing.
@@ -49,8 +50,8 @@ If you want to **manually choose an algorithm**, simply provide the `option` par
 You can **search within a specific part of the text** by providing `start` and `end` indices.
 
 ```moonbit
-@NyaSearch.search!("hello world", "o", start=0, end=5) // Returns: Ok(4)
-@NyaSearch.search!("hello world", "o", start=5, end=11) // Returns: Ok(7)
+@NyaSearch.search?("hello world", "o", start=0, end=5) // Returns: Ok(4)
+@NyaSearch.search?("hello world", "o", start=5, end=11) // Returns: Ok(7)
 ```
 - The `start` index **includes** the character at that position.
 - The `end` index **excludes** the character at that position.
