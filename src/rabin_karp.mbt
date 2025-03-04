@@ -1,37 +1,19 @@
 ///|
-enum Prework {
-  Util(p~ : Array[Int64])
-  Nil
-}
-
-///|
 pub struct StringHash {
-  n : Int
-  mod : Int64
-  base : Int64
-  hash : Array[Int64]
-  prework : Prework
-}
-
-///|
-let empty_hash : StringHash = StringHash::{
-  n: 0,
-  mod: 998244353,
-  base: 131,
-  hash: Array::make(0, 0),
-  prework: Prework::Nil,
+  n: Int
+  mod: Int64
+  base: Int64
+  hash: Array[Int64]
+  p: Array[Int64]  // 直接存储p数组，替代prework
 }
 
 ///|
 fn StringHash::new(
-  mod~ : Int64 = 998244353,
-  base~ : Int64 = 131,
-  s : String
+  mod~: Int64 = 998244353,
+  base~: Int64 = 131,
+  s: String
 ) -> StringHash {
   let n = s.length()
-  if n == 0 {
-    return empty_hash
-  }
   let p = Array::make(n + 1, 0L)
   let h = Array::make(n + 1, 0L)
   p[0] = 1
@@ -40,18 +22,15 @@ fn StringHash::new(
     p[i] = p[i - 1] * base % mod
     h[i] = (h[i - 1] * base + (s[i - 1] - 'a' + 1).to_int64()) % mod
   }
-  StringHash::{ n, mod, base, hash: h, prework: Util(p~) }
+  StringHash::{ n, mod, base, hash: h, p: p }  // 直接传入p数组
 }
 
 ///|
-fn StringHash::get_hash(self : StringHash, left : Int, right : Int) -> Int64 {
-  let p = match self.prework {
-    Util(p~) => p
-    Nil => []
-  }
+fn StringHash::get_hash(self: StringHash, left: Int, right: Int) -> Int64 {
+  // 直接使用p数组，无需匹配模式
   (
     self.hash[right + 1] -
-    self.hash[left] * p[right - left + 1] % self.mod +
+    self.hash[left] * self.p[right - left + 1] % self.mod +
     self.mod
   ) %
   self.mod
