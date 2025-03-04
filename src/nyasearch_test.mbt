@@ -14,6 +14,12 @@ test "@xunyoyo/NyaSearch.search/boundary_cases" {
 }
 
 ///|
+test "xunyoyo/NyaSearch.search/empty_text" {
+  // 空文本情况
+  inspect!(@xunyoyo/NyaSearch.search!("", "a"), content="-1")
+}
+
+///|
 test "panic @xunyoyo/NyaSearch.search/invalid_cases" {
   ignore(@xunyoyo/NyaSearch.search!("hello", "")) // empty pattern
 }

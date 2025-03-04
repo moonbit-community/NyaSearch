@@ -111,11 +111,7 @@ fn auto(text : String, pattern : String) -> Int {
       unique_chars.add(pattern[i])
     }
   }
-  let repeat_ratio = if pattern_len > 0 {
-    repeats.to_float() / pattern_len.to_float()
-  } else {
-    0.0
-  }
+  let repeat_ratio = repeats.to_float() / pattern_len.to_float()
   let alphabet_size = unique_chars.size()
   if alphabet_size > 20 && pattern_len > 15 {
     return boyer_moore(text, pattern)
@@ -128,4 +124,98 @@ fn auto(text : String, pattern : String) -> Int {
     }
   }
   kmp(text, pattern)
+}
+
+///|
+test "auto/short_pattern" {
+  // 测试短模式（长度≤2）
+  inspect!(auto("hello world", "he"), content="0")
+  inspect!(auto("abcdefghijk", "k"), content="10")
+}
+
+///|
+test "auto/short_text" {
+  // 测试短文本（长度≤10）
+  inspect!(auto("hello", "ell"), content="1")
+  inspect!(auto("abc", "bc"), content="1")
+}
+
+///|
+test "auto/large_alphabet_long_pattern" {
+  // 大字符集（>20）且长模式（>15）
+  let pattern = "abcdefghijklmnopqrstu"
+  let text = "xyz" + pattern + "123"
+  inspect!(auto(text, pattern), content="3")
+}
+
+///|
+test "auto/medium_size_high_repeat" {
+  // 中等长度模式，高重复率（>0.3）
+  let pattern = "ababcabc"  // 8字符，重复率>0.3
+  let text = "xxababcabcyy"
+  inspect!(auto(text, pattern), content="2")
+}
+
+///|
+test "auto/medium_size_low_repeat" {
+  // 中等长度模式，低重复率（≤0.3）
+  let pattern = "abcdefghij"  // 10个不同字符
+  let text = "xxabcdefghijyy"
+  inspect!(auto(text, pattern), content="2")
+}
+
+///|
+test "auto/default_path" {
+  // 默认路径 - 小字符集，短模式但不太短
+  let pattern = "abcab"  // 5个字符，字符集为3
+  let text = "ababcabxyz"
+  inspect!(auto(text, pattern), content="2")
+}
+
+///|
+test "auto/boundary_cases" {
+  // 边界情况测试
+  
+  // 恰好字符集为10，长度为9
+  let pattern1 = "abcdefghi"
+  let text1 = pattern1 + pattern1
+  inspect!(auto(text1, pattern1), content="0")
+  
+  // 恰好字符集为10，长度为10
+  let pattern2 = "abcdefghi1"
+  let text2 = pattern2 + pattern2
+  inspect!(auto(text2, pattern2), content="0")
+  
+  // 恰好重复率为0.3
+  let pattern3 = "abcabcdefg"
+  let text3 = pattern3 + pattern3
+  inspect!(auto(text3, pattern3), content="0")
+}
+
+///|
+test "auto/not_found" {
+  // 测试未找到的情况
+  inspect!(auto("hello world", "xyz"), content="-1")
+  inspect!(auto("AABAACAADAABAAABAA", "XYZ"), content="-1")
+}
+
+///|
+test "auto/empty_text" {
+  // 空文本情况
+  inspect!(auto("", "a"), content="-1")
+}
+
+///|
+test "auto/performance_cases" {
+  // 性能测试情况
+  
+  // 长重复模式
+  let repeated_pattern = "ababababab"
+  let long_text = repeated_pattern + repeated_pattern
+  inspect!(auto(long_text, repeated_pattern), content="0")
+  
+  // 长唯一字符模式
+  let unique_chars = "abcdefghijklmnopqrstuvwxyz"
+  let long_unique_text = unique_chars + "xyz"
+  inspect!(auto(long_unique_text, unique_chars), content="0")
 }
