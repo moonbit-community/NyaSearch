@@ -14,7 +14,7 @@ test "@xunyoyo/NyaSearch.search/boundary_cases" {
 }
 
 ///|
-test "panic @xunyoyo/NyaSearch.search/empty_text" {
+test "@xunyoyo/NyaSearch.search/empty_text" {
   // 空文本情况
   inspect!(@xunyoyo/NyaSearch.search!("", "a"), content="-1")
 }
