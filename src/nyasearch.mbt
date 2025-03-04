@@ -52,8 +52,6 @@ pub fn search(
     raise EmptyPatternError("Empty search pattern is not allowed")
   } else if pattern.length() > text.length() {
     raise PatternTooLongError("Search pattern cannot be longer than the text")
-  } else if text.is_empty() {
-    return -1
   } else if start > end || start < 0 || end > text.length() {
     raise InvalidRangeError(
       "Invalid search range: ensure start <= end and both are within text bounds",
