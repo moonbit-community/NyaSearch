@@ -131,3 +131,51 @@ test "panic search/invalid_range" {
   ignore(search!("hello world", "world", start=-1, end=5))
   ignore(search!("hello world", "world", start=0, end=12))
 }
+
+///|
+pub struct FuzzyMatch {
+  position : Int
+  score : Float
+  length : Int
+}
+
+impl Compare for FuzzyMatch with compare(front, after) {
+  if front.score == after.score {
+    0
+  } else {
+    if front.score < after.score {
+      -1
+    } else {
+      1
+    }
+  }
+}
+
+impl Eq for FuzzyMatch with op_equal(front, after) {
+  front.position == after.position && front.score == after.score && front.length == after.length
+}
+
+///|
+pub struct FuzzyOptions {
+  threshold : Float
+  max_distance : Int
+  case_sensitive : Bool
+  max_results : Int
+}
+
+// ///|
+// pub fn fuzzy_search(
+//   text : String,
+//   pattern : String,
+//   algorithm~ : String = "levenshtein",
+//   options~ : FuzzyOptions = {
+//     threshold: 0.7,
+//     max_distance: 2,
+//     case_sensitive: false,
+//     max_results: 10,
+//   },
+//   start~ : Int = 0,
+//   end~ : Int = text.length()
+// ) -> Array[FuzzyMatch]!Error {
+
+// }
