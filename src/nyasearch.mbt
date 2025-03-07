@@ -133,49 +133,202 @@ test "panic search/invalid_range" {
 }
 
 ///|
-pub struct FuzzyMatch {
-  position : Int
-  score : Float
-  length : Int
-}
-
-impl Compare for FuzzyMatch with compare(front, after) {
-  if front.score == after.score {
-    0
+/// Performs a fuzzy search for a pattern within a text, allowing for approximate
+/// matches based on string similarity.
+///
+/// Parameters:
+///
+/// * `text` : The text to search in.
+/// * `pattern` : The pattern to search for.
+/// * `algorithm` : The fuzzy matching algorithm to use. Currently supports 
+/// "levenshtein" and "jaro_winkler". Defaults to "levenshtein".
+/// * `options` : Configuration options for the fuzzy search:
+///  * `threshold` : Minimum similarity score (between 0 and 1) for a match to be
+/// considered valid. Defaults to 0.7.
+///  * `max_distance` : Maximum allowed edit distance between pattern and
+/// potential matches. Defaults to 2.
+///  * `case_sensitive` : Whether the search should be case-sensitive. Defaults
+/// to false.
+///  * `max_results` : Maximum number of matches to return. Defaults to 10.
+/// * `start` : The starting index in the text to begin the search (inclusive).
+/// Defaults to 0.
+/// * `end` : The ending index in the text to end the search (exclusive).
+/// Defaults to the length of the text.
+///
+/// Returns an array of `FuzzyMatch` objects, each containing:
+///
+/// * `position` : The starting position of the match in the text
+/// * `score` : The similarity score of the match (higher is better)
+/// * `length` : The length of the matched substring
+///
+/// Throws:
+///
+/// * `EmptyPatternError` if the search pattern is empty
+/// * `InvalidRangeError` if the search range is invalid (start > end, start < 0,
+/// or end > text length)
+/// * `OptionChooseError` if an invalid algorithm option is provided
+///
+/// Example:
+///
+/// ```moonbit
+/// let options = FuzzyOptions::{
+///   threshold: 0.8,
+///   max_distance: 1,
+///   case_sensitive: false,
+///   max_results: 5
+/// }
+/// let result = fuzzy_search!("Hello World", "helo", options~)
+/// ```
+pub fn fuzzy_search(
+  text : String,
+  pattern : String,
+  algorithm~ : String = "levenshtein",
+  options~ : FuzzyOptions = {
+    threshold: 0.7,
+    max_distance: 2,
+    case_sensitive: false,
+    max_results: 10,
+  },
+  start~ : Int = 0,
+  end~ : Int = text.length()
+) -> Array[FuzzyMatch]!Error {
+  if pattern.is_empty() {
+    raise EmptyPatternError("Empty search pattern is not allowed")
+  } else if text.is_empty() {
+    return []
+  } else if start > end || start < 0 || end > text.length() {
+    raise InvalidRangeError(
+      "Invalid search range: ensure start <= end and both are within text bounds",
+    )
+  }
+  let search_text = if options.case_sensitive {
+    text.substring(start~, end~)
   } else {
-    if front.score < after.score {
-      -1
-    } else {
-      1
-    }
+    text.substring(start~, end~).to_lower()
+  }
+  let search_pattern = if options.case_sensitive {
+    pattern
+  } else {
+    pattern.to_lower()
+  }
+  match algorithm {
+    "levenshtein" => levenshtein(search_text, search_pattern, options)
+    "jaro_winkler" => jaro_winkler(search_text, search_pattern, options)
+    _ =>
+      raise OptionChooseError(
+        "Invalid search algorithm option. Available options: 'auto', 'kmp', 'rabin_karp', 'boyer_moore'",
+      )
   }
 }
 
-impl Eq for FuzzyMatch with op_equal(front, after) {
-  front.position == after.position && front.score == after.score && front.length == after.length
+///|
+test "fuzzy_search/basic" {
+  let options = FuzzyOptions::{
+    threshold: 0.8,
+    max_distance: 1,
+    case_sensitive: true,
+    max_results: 5,
+  }
+  let result = fuzzy_search!("Hello World", "Hello", options~)
+  inspect!(result.length(), content="1")
+  if not(result.is_empty()) {
+    inspect!(result[0].position, content="0")
+    inspect!(result[0].score >= 0.8, content="true")
+  }
 }
 
 ///|
-pub struct FuzzyOptions {
-  threshold : Float
-  max_distance : Int
-  case_sensitive : Bool
-  max_results : Int
+test "fuzzy_search/range" {
+  let options = FuzzyOptions::{
+    threshold: 0.7,
+    max_distance: 2,
+    case_sensitive: false,
+    max_results: 10,
+  }
+  let result = fuzzy_search!("Hello World Hello", "hello", options~, start=6)
+  inspect!(result.length(), content="1")
+  if not(result.is_empty()) {
+    inspect!(result[0].position, content="6")
+  }
 }
 
-// ///|
-// pub fn fuzzy_search(
-//   text : String,
-//   pattern : String,
-//   algorithm~ : String = "levenshtein",
-//   options~ : FuzzyOptions = {
-//     threshold: 0.7,
-//     max_distance: 2,
-//     case_sensitive: false,
-//     max_results: 10,
-//   },
-//   start~ : Int = 0,
-//   end~ : Int = text.length()
-// ) -> Array[FuzzyMatch]!Error {
+///|
+test "panic fuzzy_search/invalid" {
+  let options = FuzzyOptions::{
+    threshold: 0.7,
+    max_distance: 2,
+    case_sensitive: false,
+    max_results: 10,
+  }
+  // Test empty pattern
+  ignore(fuzzy_search!("hello", "", options~))
+  // Test invalid range
+  ignore(fuzzy_search!("hello", "h", options~, start=5, end=3))
+  // Test invalid algorithm
+  ignore(fuzzy_search!("hello", "h", algorithm="invalid", options~))
+}
 
-// }
+///|
+test "fuzzy_search/basic" {
+  let options = FuzzyOptions::{
+    threshold: 0.7,
+    max_distance: 2,
+    case_sensitive: false,
+    max_results: 10,
+  }
+  let result = fuzzy_search!("hello world", "hello", options~)
+  inspect!(result.length(), content="1")
+  inspect!(result[0].position, content="0")
+  inspect!(result[0].score, content="1")
+
+  let result = fuzzy_search!("hello world", "hello", algorithm="jaro_winkler" ,options~)
+  // println(result)
+  inspect!(result[0].position, content="0")
+  inspect!(result[0].score, content="1")
+}
+
+///|
+test "panic fuzzy_search/boundary_case_empty_pattern" {
+  let options = FuzzyOptions::{
+    threshold: 0.7,
+    max_distance: 2,
+    case_sensitive: false,
+    max_results: 10,
+  }
+  ignore(fuzzy_search!("hello world", "", options~))
+}
+
+///|
+test "panic fuzzy_search/boundary_case_invalid_range" {
+  let options = FuzzyOptions::{
+    threshold: 0.7,
+    max_distance: 2,
+    case_sensitive: false,
+    max_results: 10,
+  }
+  ignore(fuzzy_search!("hello world", "hello", options~, start=5, end=2))
+}
+
+///|
+test "fuzzy_search/text_empty" {
+  let options = FuzzyOptions::{
+    threshold: 0.8,
+    max_distance: 1,
+    case_sensitive: true,
+    max_results: 5,
+  }
+  let result = fuzzy_search!("", "Hello", options~)
+  inspect!(result, content="[]")
+}
+
+///|
+test "panic fuzzy_search/algorithm_error" {
+  let options = FuzzyOptions::{
+    threshold: 0.8,
+    max_distance: 1,
+    case_sensitive: true,
+    max_results: 5,
+  }
+  let result = fuzzy_search!("12453", "Hello", algorithm="other", options~)
+  inspect!(result, content="[]")
+}
