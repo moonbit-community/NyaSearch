@@ -1,4 +1,114 @@
 ///|
+pub struct FuzzyMatch {
+  position : Int
+  score : Float
+  length : Int
+}
+
+///|
+impl Show for FuzzyMatch with output(self, logger) {
+  logger.write_string("FuzzyMatch { position: ")
+  logger.write_string(self.position.to_string())
+  logger.write_string(", score: ")
+  logger.write_string(self.score.to_string())
+  logger.write_string(", length: ")
+  logger.write_string(self.length.to_string())
+  logger.write_string(" }")
+}
+
+///|
+impl Compare for FuzzyMatch with compare(front, after) {
+  if front.score == after.score {
+    // 分数相同时，比较位置，位置小的排在前面
+    if front.position < after.position {
+      -1
+    } else if front.position > after.position {
+      1
+    } else {
+      0
+    }
+  } else if front.score < after.score {
+    1
+  } else {
+    -1
+  }
+}
+
+///|
+test "FuzzyMatch::compare/equal_positions" {
+  let fm1 = FuzzyMatch::{ position: 5, score: 0.8, length: 3 }
+  let fm2 = FuzzyMatch::{ position: 5, score: 0.8, length: 4 }
+  inspect!(fm1.compare(fm2), content="0")
+}
+
+///|
+test "FuzzyMatch::compare/different_scores" {
+  let fm1 = FuzzyMatch::{ position: 2, score: 0.9, length: 3 }
+  let fm2 = FuzzyMatch::{ position: 3, score: 0.7, length: 4 }
+  inspect!(fm1.compare(fm2), content="-1")
+  inspect!(fm2.compare(fm1), content="1")
+}
+
+///|
+test "FuzzyMatch::compare/same_score_different_positions" {
+  let fm1 = FuzzyMatch::{ position: 1, score: 0.8, length: 3 }
+  let fm2 = FuzzyMatch::{ position: 2, score: 0.8, length: 4 }
+  inspect!(fm1.compare(fm2), content="-1")
+  inspect!(fm2.compare(fm1), content="1")
+}
+
+///|
+impl Eq for FuzzyMatch with op_equal(front, after) {
+  front.position == after.position &&
+  front.score == after.score &&
+  front.length == after.length
+}
+
+///|
+test "FuzzyMatch::op_equal/identical" {
+  let m1 = FuzzyMatch::{ position: 0, score: 1.0, length: 5 }
+  let m2 = FuzzyMatch::{ position: 0, score: 1.0, length: 5 }
+  inspect!(m1 == m2, content="true")
+}
+
+///|
+test "FuzzyMatch::op_equal/different" {
+  let base = FuzzyMatch::{ position: 0, score: 1.0, length: 5 }
+  let pos_diff = FuzzyMatch::{ position: 1, score: 1.0, length: 5 }
+  let score_diff = FuzzyMatch::{ position: 0, score: 0.9, length: 5 }
+  let len_diff = FuzzyMatch::{ position: 0, score: 1.0, length: 4 }
+  inspect!(base == pos_diff, content="false")
+  inspect!(base == score_diff, content="false")
+  inspect!(base == len_diff, content="false")
+}
+
+///|
+test "FuzzyMatch::op_equal/edge_cases" {
+  let zero = FuzzyMatch::{ position: 0, score: 0.0, length: 0 }
+  let zero_twin = FuzzyMatch::{ position: 0, score: 0.0, length: 0 }
+  let max = FuzzyMatch::{
+    position: @int.max_value,
+    score: 1.0,
+    length: @int.max_value,
+  }
+  let max_twin = FuzzyMatch::{
+    position: @int.max_value,
+    score: 1.0,
+    length: @int.max_value,
+  }
+  inspect!(zero == zero_twin, content="true")
+  inspect!(max == max_twin, content="true")
+}
+
+///|
+pub struct FuzzyOptions {
+  threshold : Float
+  max_distance : Int
+  case_sensitive : Bool
+  max_results : Int
+}
+
+///|
 fn compute_lps(pattern : String) -> Array[Int] {
   let m = pattern.length()
   let lps = Array::make(m, 0)
@@ -151,7 +261,7 @@ test "auto/large_alphabet_long_pattern" {
 ///|
 test "auto/medium_size_high_repeat" {
   // 中等长度模式，高重复率（>0.3）
-  let pattern = "ababcabc"  // 8字符，重复率>0.3
+  let pattern = "ababcabc" // 8字符，重复率>0.3
   let text = "xxababcabcyy"
   inspect!(auto(text, pattern), content="2")
 }
@@ -159,7 +269,7 @@ test "auto/medium_size_high_repeat" {
 ///|
 test "auto/medium_size_low_repeat" {
   // 中等长度模式，低重复率（≤0.3）
-  let pattern = "abcdefghij"  // 10个不同字符
+  let pattern = "abcdefghij" // 10个不同字符
   let text = "xxabcdefghijyy"
   inspect!(auto(text, pattern), content="2")
 }
@@ -167,7 +277,7 @@ test "auto/medium_size_low_repeat" {
 ///|
 test "auto/default_path" {
   // 默认路径 - 小字符集，短模式但不太短
-  let pattern = "abcab"  // 5个字符，字符集为3
+  let pattern = "abcab" // 5个字符，字符集为3
   let text = "ababcabxyz"
   inspect!(auto(text, pattern), content="2")
 }
@@ -175,17 +285,17 @@ test "auto/default_path" {
 ///|
 test "auto/boundary_cases" {
   // 边界情况测试
-  
+
   // 恰好字符集为10，长度为9
   let pattern1 = "abcdefghi"
   let text1 = pattern1 + pattern1
   inspect!(auto(text1, pattern1), content="0")
-  
+
   // 恰好字符集为10，长度为10
   let pattern2 = "abcdefghi1"
   let text2 = pattern2 + pattern2
   inspect!(auto(text2, pattern2), content="0")
-  
+
   // 恰好重复率为0.3
   let pattern3 = "abcabcdefg"
   let text3 = pattern3 + pattern3
@@ -208,12 +318,12 @@ test "auto/empty_text" {
 ///|
 test "auto/performance_cases" {
   // 性能测试情况
-  
+
   // 长重复模式
   let repeated_pattern = "ababababab"
   let long_text = repeated_pattern + repeated_pattern
   inspect!(auto(long_text, repeated_pattern), content="0")
-  
+
   // 长唯一字符模式
   let unique_chars = "abcdefghijklmnopqrstuvwxyz"
   let long_unique_text = unique_chars + "xyz"
@@ -223,24 +333,24 @@ test "auto/performance_cases" {
 ///|
 test "compute_suffix_array/special_branch_coverage" {
   // 这个测试专门用来触发难以覆盖的分支
-  
+
   // 选择已知能触发特殊条件的模式
   let patterns = [
-    "abacabab",      // 包含重复但不完全重复的模式
-    "abcababcab",    // 有重叠部分的模式
-    "aaaabaaaba",    // 有很多重复的模式
-    "abcdabcabc",    // 更复杂的重叠模式
-    "aabcaabcaab"    // 另一种复杂重叠模式
+    "abacabab", // 包含重复但不完全重复的模式
+     "abcababcab", // 有重叠部分的模式
+     "aaaabaaaba", // 有很多重复的模式
+     "abcdabcabc", // 更复杂的重叠模式
+     "aabcaabcaab", // 另一种复杂重叠模式
   ]
-  
+
   // 对每个模式运行并验证结果
   for pattern in patterns {
     let m = pattern.length()
     let suffix = Array::make(m, 0)
     compute_suffix_array(pattern, suffix)
-    
+
     // 验证结果是否正确
     // 这里我们可以检查特定已知的值，或者简单地确保没有异常
-    inspect!(suffix.length() == m,content="true")
+    inspect!(suffix.length() == m, content="true")
   }
 }
