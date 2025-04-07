@@ -20,7 +20,7 @@ fn StringHash::new(
   h[0] = 1
   for i = 1; i <= n; i = i + 1 {
     p[i] = p[i - 1] * base % mod
-    h[i] = (h[i - 1] * base + (s[i - 1] - 'a' + 1).to_int64()) % mod
+    h[i] = (h[i - 1] * base + ((s[i - 1].to_int() - 'a'.to_int() + 1).to_int64())) % mod
   }
   StringHash::{ n, mod, base, hash: h, p } // 直接传入p数组
 }
@@ -40,6 +40,9 @@ fn StringHash::get_hash(self : StringHash, left : Int, right : Int) -> Int64 {
 fn rabin_karp(text : String, pattern : String) -> Int {
   let n = text.length()
   let m = pattern.length()
+  if m == 0 || n == 0 || m > n {
+    return -1
+  }  
   let text_hash = StringHash::new(text)
   let pattern_hash = StringHash::new(pattern)
   let pattern_hash_value = pattern_hash.get_hash(0, m - 1)
@@ -72,4 +75,11 @@ test "boyer_moore/basic" {
 test "boyer_moore/pattern_not_found" {
   inspect!(rabin_karp("hello world", "moon"), content="-1")
   inspect!(rabin_karp("AABAACAADAABAAABAA", "ZZZ"), content="-1")
+}
+
+///
+test "rabin_karp/empty" {
+  inspect!(rabin_karp("", ""), content="-1")
+  inspect!(rabin_karp("hello world", ""), content="-1")
+  inspect!(rabin_karp("", "world"), content="-1")
 }
