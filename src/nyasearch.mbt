@@ -32,22 +32,21 @@
 /// Examples:
 ///
 /// ```moonbit
-/// ///|
-/// /// basic
-/// search!("hello world", "world") // content = 6, using auto method.
-/// search!("hello world", "world", option="kmp") // content = 6, using kmp method.
+/// // basic
+/// assert_eq(search("hello world", "world"), 6) // using auto method.
+/// assert_eq(search("hello world", "world", option="kmp"), 6) // using kmp method.
 ///
-/// ///|
-/// /// range
-/// search!("hello world", "o", start=0, end=5) // content = 4
+/// // range
+/// assert_eq(search("hello world", "o", start=0, end=5), 4)
 /// ```
 pub fn search(
   text : String,
   pattern : String,
   option~ : String = "auto",
   start~ : Int = 0,
-  end~ : Int = text.length()
-) -> Int!Error {
+  end? : Int
+) -> Int raise Error {
+  let end = end.or(text.length())
   if pattern.is_empty() {
     raise EmptyPatternError("Empty search pattern is not allowed")
   } else if text.is_empty() {
@@ -79,57 +78,57 @@ pub fn search(
 
 ///|
 test "search/basic" {
-  inspect!(search!("hello world", "world"), content="6")
-  inspect!(search!("hello world", "world", option="kmp"), content="6")
-  inspect!(search!("hello world", "world", option="rabin_karp"), content="6")
-  inspect!(search!("hello world", "world", option="boyer_moore"), content="6")
+  inspect(search("hello world", "world"), content="6")
+  inspect(search("hello world", "world", option="kmp"), content="6")
+  inspect(search("hello world", "world", option="rabin_karp"), content="6")
+  inspect(search("hello world", "world", option="boyer_moore"), content="6")
 }
 
 ///|
 test "search/range" {
-  inspect!(search!("hello world", "o", start=0, end=5), content="4")
-  inspect!(search!("hello world", "o", start=5, end=11), content="7")
-  inspect!(search!("hello world", "l", start=3, end=5), content="3")
+  inspect(search("hello world", "o", start=0, end=5), content="4")
+  inspect(search("hello world", "o", start=5, end=11), content="7")
+  inspect(search("hello world", "l", start=3, end=5), content="3")
 }
 
 ///|
 test "panic search/invalid" {
-  let _ = search!("hello", "")
-  let _ = search!("hello", "world", option="invalid")
-  let _ = search!("hello", "h", start=5, end=3)
-  let _ = search!("hello", "h", start=-1, end=5)
-  let _ = search!("hello", "h", start=0, end=6)
+  let _ = search("hello", "")
+  let _ = search("hello", "world", option="invalid")
+  let _ = search("hello", "h", start=5, end=3)
+  let _ = search("hello", "h", start=-1, end=5)
+  let _ = search("hello", "h", start=0, end=6)
 
 }
 
 ///|
 test "search/basic" {
-  inspect!(search!("hello world", "world"), content="6")
-  inspect!(search!("AABAACAADAABAAABAA", "AABA"), content="0")
-  inspect!(search!("THIS IS A TEST TEXT", "TEST"), content="10")
+  inspect(search("hello world", "world"), content="6")
+  inspect(search("AABAACAADAABAAABAA", "AABA"), content="0")
+  inspect(search("THIS IS A TEST TEXT", "TEST"), content="10")
 }
 
 ///|
 test "search/pattern_not_found" {
-  inspect!(search!("hello world", "moon"), content="-1")
-  inspect!(search!("AABAACAADAABAAABAA", "ZZZ"), content="-1")
+  inspect(search("hello world", "moon"), content="-1")
+  inspect(search("AABAACAADAABAAABAA", "ZZZ"), content="-1")
 }
 
 ///|
 test "panic search/empty_pattern" {
-  ignore(search!("hello world", ""))
+  ignore(search("hello world", ""))
 }
 
 ///|
 test "panic search/pattern_too_long" {
-  ignore(search!("hello", "hello world"))
+  ignore(search("hello", "hello world"))
 }
 
 ///|
 test "panic search/invalid_range" {
-  ignore(search!("hello world", "world", start=5, end=1))
-  ignore(search!("hello world", "world", start=-1, end=5))
-  ignore(search!("hello world", "world", start=0, end=12))
+  ignore(search("hello world", "world", start=5, end=1))
+  ignore(search("hello world", "world", start=-1, end=5))
+  ignore(search("hello world", "world", start=0, end=12))
 }
 
 ///|
@@ -177,7 +176,7 @@ test "panic search/invalid_range" {
 ///   case_sensitive: false,
 ///   max_results: 5
 /// }
-/// let result = fuzzy_search!("Hello World", "helo", options~)
+/// inspect(fuzzy_search("Hello World", "helo", options~), content="[]")
 /// ```
 pub fn fuzzy_search(
   text : String,
@@ -190,8 +189,9 @@ pub fn fuzzy_search(
     max_results: 10,
   },
   start~ : Int = 0,
-  end~ : Int = text.length()
-) -> Array[FuzzyMatch]!Error {
+  end? : Int
+) -> Array[FuzzyMatch] raise Error {
+  let end = end.or(text.length())
   if pattern.is_empty() {
     raise EmptyPatternError("Empty search pattern is not allowed")
   } else if text.is_empty() {
@@ -229,11 +229,11 @@ test "fuzzy_search/basic" {
     case_sensitive: true,
     max_results: 5,
   }
-  let result = fuzzy_search!("Hello World", "Hello", options~)
-  inspect!(result.length(), content="1")
+  let result = fuzzy_search("Hello World", "Hello", options~)
+  inspect(result.length(), content="1")
   if not(result.is_empty()) {
-    inspect!(result[0].position, content="0")
-    inspect!(result[0].score >= 0.8, content="true")
+    inspect(result[0].position, content="0")
+    inspect(result[0].score >= 0.8, content="true")
   }
 }
 
@@ -245,10 +245,10 @@ test "fuzzy_search/range" {
     case_sensitive: false,
     max_results: 10,
   }
-  let result = fuzzy_search!("Hello World Hello", "hello", options~, start=6)
-  inspect!(result.length(), content="1")
+  let result = fuzzy_search("Hello World Hello", "hello", options~, start=6)
+  inspect(result.length(), content="1")
   if not(result.is_empty()) {
-    inspect!(result[0].position, content="6")
+    inspect(result[0].position, content="6")
   }
 }
 
@@ -261,11 +261,11 @@ test "panic fuzzy_search/invalid" {
     max_results: 10,
   }
   // Test empty pattern
-  ignore(fuzzy_search!("hello", "", options~))
+  ignore(fuzzy_search("hello", "", options~))
   // Test invalid range
-  ignore(fuzzy_search!("hello", "h", options~, start=5, end=3))
+  ignore(fuzzy_search("hello", "h", options~, start=5, end=3))
   // Test invalid algorithm
-  ignore(fuzzy_search!("hello", "h", algorithm="invalid", options~))
+  ignore(fuzzy_search("hello", "h", algorithm="invalid", options~))
 }
 
 ///|
@@ -276,15 +276,19 @@ test "fuzzy_search/basic" {
     case_sensitive: false,
     max_results: 10,
   }
-  let result = fuzzy_search!("hello world", "hello", options~)
-  inspect!(result.length(), content="1")
-  inspect!(result[0].position, content="0")
-  inspect!(result[0].score, content="1")
-
-  let result = fuzzy_search!("hello world", "hello", algorithm="jaro_winkler" ,options~)
+  let result = fuzzy_search("hello world", "hello", options~)
+  inspect(result.length(), content="1")
+  inspect(result[0].position, content="0")
+  inspect(result[0].score, content="1")
+  let result = fuzzy_search(
+    "hello world",
+    "hello",
+    algorithm="jaro_winkler",
+    options~,
+  )
   // println(result)
-  inspect!(result[0].position, content="0")
-  inspect!(result[0].score, content="1")
+  inspect(result[0].position, content="0")
+  inspect(result[0].score, content="1")
 }
 
 ///|
@@ -295,7 +299,7 @@ test "panic fuzzy_search/boundary_case_empty_pattern" {
     case_sensitive: false,
     max_results: 10,
   }
-  ignore(fuzzy_search!("hello world", "", options~))
+  ignore(fuzzy_search("hello world", "", options~))
 }
 
 ///|
@@ -306,7 +310,7 @@ test "panic fuzzy_search/boundary_case_invalid_range" {
     case_sensitive: false,
     max_results: 10,
   }
-  ignore(fuzzy_search!("hello world", "hello", options~, start=5, end=2))
+  ignore(fuzzy_search("hello world", "hello", options~, start=5, end=2))
 }
 
 ///|
@@ -317,8 +321,8 @@ test "fuzzy_search/text_empty" {
     case_sensitive: true,
     max_results: 5,
   }
-  let result = fuzzy_search!("", "Hello", options~)
-  inspect!(result, content="[]")
+  let result = fuzzy_search("", "Hello", options~)
+  inspect(result, content="[]")
 }
 
 ///|
@@ -329,6 +333,6 @@ test "panic fuzzy_search/algorithm_error" {
     case_sensitive: true,
     max_results: 5,
   }
-  let result = fuzzy_search!("12453", "Hello", algorithm="other", options~)
-  inspect!(result, content="[]")
+  let result = fuzzy_search("12453", "Hello", algorithm="other", options~)
+  inspect(result, content="[]")
 }

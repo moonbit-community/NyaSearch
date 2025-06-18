@@ -15,7 +15,7 @@ fn jaro_winkler_similarity(
     let start = @math.maximum(0, i - match_window)
     let end = @math.minimum(len2, i + match_window + 1)
     for j = start; j < end; j = j + 1 {
-      if not(match2[j]) && s1[i] == s2[j] {
+      if not(match2[j]) && s1.charcode_at(i) == s2.charcode_at(j) {
         match1[i] = true
         match2[j] = true
         matches = matches + 1
@@ -33,7 +33,7 @@ fn jaro_winkler_similarity(
       while not(match2[j]) {
         j = j + 1
       }
-      if s1[i] != s2[j] {
+      if s1.charcode_at(i) != s2.charcode_at(j) {
         transpositions = transpositions + 1
       }
       j = j + 1
@@ -50,7 +50,7 @@ fn jaro_winkler_similarity(
   let mut prefix_len = 0
   let max_prefix = @math.minimum(prefix_max, @math.minimum(len1, len2))
   for i = 0; i < max_prefix; i = i + 1 {
-    if s1[i] == s2[i] {
+    if s1.charcode_at(i) == s2.charcode_at(i) {
       prefix_len = prefix_len + 1
     } else {
       break
@@ -64,30 +64,37 @@ test "jaro_winkler_similarity/prefix_calculation" {
   // 测试完全不同的字符串 (没有共同前缀)
   let score1 = jaro_winkler_similarity("abc", "xyz")
   let base_score1 = jaro_winkler_similarity("abc", "xyz", prefix_scale=0.0) // 不计算前缀加成
-  inspect!(score1 == base_score1, content="true") // 前缀长度为0，不应有加成
-  
+  inspect(score1 == base_score1, content="true") // 前缀长度为0，不应有加成
+
   // 测试部分前缀匹配
   let score2 = jaro_winkler_similarity("abcdef", "abcxyz")
-  let base_score2 = jaro_winkler_similarity("abcdef", "abcxyz", prefix_scale=0.0)
-  inspect!(score2 > base_score2, content="true") // 有3字符共同前缀，应该有加成
-  
+  let base_score2 = jaro_winkler_similarity(
+    "abcdef",
+    "abcxyz",
+    prefix_scale=0.0,
+  )
+  inspect(score2 > base_score2, content="true") // 有3字符共同前缀，应该有加成
+
   // 测试最大前缀限制 (默认 prefix_max=4)
   let score3 = jaro_winkler_similarity("abcdefghi", "abcdefxyz")
   let score4 = jaro_winkler_similarity("abcdefghi", "abcdefxyz", prefix_max=6)
-  inspect!(score3 < score4, content="true") // 增加最大前缀限制应提高分数
-  
+  inspect(score3 < score4, content="true") // 增加最大前缀限制应提高分数
+
   // 测试完全相同前缀，但后面不同
   let score5 = jaro_winkler_similarity("hello world", "hello moon")
-  let base_score5 = jaro_winkler_similarity("hello world", "hello moon", prefix_scale=0.0)
-  inspect!(score5 > base_score5, content="true") // "hello "是共同前缀
-  
+  let base_score5 = jaro_winkler_similarity(
+    "hello world",
+    "hello moon",
+    prefix_scale=0.0,
+  )
+  inspect(score5 > base_score5, content="true") // "hello "是共同前缀
+
   // 测试空字符串和空前缀情况
   let score6 = jaro_winkler_similarity("", "abc")
-  inspect!(score6, content="0") // 空字符串应返回0
-  
+  inspect(score6, content="0") // 空字符串应返回0
   let score7 = jaro_winkler_similarity("xyz", "abc")
   let base_score7 = jaro_winkler_similarity("xyz", "abc", prefix_scale=0.0)
-  inspect!(score7 == base_score7, content="true") // 无共同前缀
+  inspect(score7 == base_score7, content="true") // 无共同前缀
 }
 
 ///|
@@ -140,11 +147,11 @@ test "jaro_winkler/exact_matches" {
   let result = jaro_winkler("hello world hello", "hello", options)
   if result.length() >= 2 {
     // First match should be at position 0
-    inspect!(result[0].position, content="0")
-    inspect!(result[0].score, content="1")
+    inspect(result[0].position, content="0")
+    inspect(result[0].score, content="1")
     // Second match should be at position 6
-    inspect!(result[1].position, content="12")
-    inspect!(result[1].score, content="1")
+    inspect(result[1].position, content="12")
+    inspect(result[1].score, content="1")
   }
 }
 
@@ -159,7 +166,7 @@ test "jaro_winkler/max_results_limit" {
   // Text contains three occurrences of "hello" but max_results is 2
   let result = jaro_winkler("hello world hello moon hello", "hello", options)
   // Should only return first two matches due to max_results limit
-  inspect!(result.length(), content="2")
+  inspect(result.length(), content="2")
 }
 
 ///|
@@ -173,5 +180,5 @@ test "jaro_winkler/max_results_limit(all different)" {
   // Text contains three occurrences of "hello" but max_results is 2
   let result = jaro_winkler("abc", "def", options)
   // Should only return first two matches due to max_results limit
-  inspect!(result.length(), content="0")
+  inspect(result.length(), content="0")
 }

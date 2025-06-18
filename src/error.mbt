@@ -1,11 +1,11 @@
 ///|
-priv type! EmptyPatternError String derive(Show)
+priv suberror EmptyPatternError String derive(Show)
 
 ///|
-priv type! PatternTooLongError String derive(Show)
+priv suberror PatternTooLongError String derive(Show)
 
 ///|
-priv type! OptionChooseError String derive(Show)
+priv suberror OptionChooseError String derive(Show)
 
 ///|
-priv type! InvalidRangeError String derive(Show)
+priv suberror InvalidRangeError String derive(Show)

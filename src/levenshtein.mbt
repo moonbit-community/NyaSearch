@@ -18,7 +18,7 @@ fn levenshtein_distance_threshold(
     curr[0] = i
     let mut row_min = m + n
     for j = 1; j <= n; j = j + 1 {
-      if s[i - 1] == t[j - 1] {
+      if s.charcode_at(i - 1) == t.charcode_at(j - 1) {
         curr[j] = prev[j - 1]
       } else {
         curr[j] = 1 +
@@ -45,7 +45,7 @@ test "levenshtein_distance_threshold/length_difference_optimization" {
   // 由于 |6-1| = 5 > 2，应直接返回 threshold + 1 = 3
   // 而不需计算实际的编辑距离
   let result1 = levenshtein_distance_threshold("abcdef", "a", 2)
-  inspect!(result1, content="3") // threshold + 1 = 3
+  inspect(result1, content="3") // threshold + 1 = 3
 
   // 情况 2: 字符串长度差等于阈值，应计算实际编辑距离
   //
@@ -53,7 +53,7 @@ test "levenshtein_distance_threshold/length_difference_optimization" {
   // 由于 |3-1| = 2 == 2，不会触发早期返回，应计算实际编辑距离
   // 实际编辑距离是 2（需要删除两个字符）
   let result2 = levenshtein_distance_threshold("abc", "a", 2)
-  inspect!(result2, content="2")
+  inspect(result2, content="2")
 
   // 情况 3: 字符串长度差小于阈值，应计算实际编辑距离
   //
@@ -61,14 +61,14 @@ test "levenshtein_distance_threshold/length_difference_optimization" {
   // 由于 |3-2| = 1 < 2，不会触发早期返回，应计算实际编辑距离
   // 实际编辑距离是 1（需要删除一个字符）
   let result3 = levenshtein_distance_threshold("abc", "ab", 2)
-  inspect!(result3, content="1")
+  inspect(result3, content="1")
 
   // 情况 4: 测试空字符串与非空字符串
   //
   // 例如: "" 和 "abcde" 的长度差是 5，阈值设为 3
   // 由于 |0-5| = 5 > 3，应直接返回 threshold + 1 = 4
   let result4 = levenshtein_distance_threshold("", "abcde", 3)
-  inspect!(result4, content="4")
+  inspect(result4, content="4")
 
   // 情况 5: 测试长度相等但内容差异大于阈值的字符串
   //
@@ -76,7 +76,7 @@ test "levenshtein_distance_threshold/length_difference_optimization" {
   // 虽然长度差小于阈值，但实际编辑距离是 5，大于阈值
   // 函数会计算出实际距离大于阈值，返回 threshold + 1 = 3
   let result5 = levenshtein_distance_threshold("abcde", "vwxyz", 2)
-  inspect!(result5, content="3")
+  inspect(result5, content="3")
 
   // 情况 6: 测试字符串长度差接近边界条件
   //
@@ -84,20 +84,20 @@ test "levenshtein_distance_threshold/length_difference_optimization" {
   // 由于 |1-4| = 3 == 3，不会触发早期返回，应计算实际编辑距离
   // 实际编辑距离是 3（需要插入三个字符）
   let result6 = levenshtein_distance_threshold("a", "abcd", 3)
-  inspect!(result6, content="3")
+  inspect(result6, content="3")
 
   // 情况 7: 测试相同字符串
   //
   // 例如: "same" 和 "same" 的长度差是 0，阈值设为 1
   // 不会触发早期返回，实际编辑距离是 0
   let result7 = levenshtein_distance_threshold("same", "same", 1)
-  inspect!(result7, content="0")
+  inspect(result7, content="0")
 
   // 情况 8: 测试最终编辑距离大于阈值但不触发提前返回
   //
   // 使用 "abc" 和 "xyz"，长度相等（差为0），阈值为2
   let result10 = levenshtein_distance_threshold("abc", "zzz", 1)
-  inspect!(result10, content="2")
+  inspect(result10, content="2")
 }
 
 ///|
@@ -140,16 +140,16 @@ test "levenshtein_fuzzy_search/basic_matching" {
     max_results: 10,
   }
   let result1 = levenshtein("hello world", "hello", options)
-  inspect!(result1.length(), content="1")
+  inspect(result1.length(), content="1")
   if not(result1.is_empty()) {
-    inspect!(result1[0].position, content="0")
-    inspect!(result1[0].score, content="1")
+    inspect(result1[0].position, content="0")
+    inspect(result1[0].score, content="1")
   }
   let result2 = levenshtein("hello world", "hallo", options)
-  inspect!(result2.length() > 0, content="true")
+  inspect(result2.length() > 0, content="true")
   if not(result2.is_empty()) {
-    inspect!(result2[0].position, content="0")
-    inspect!(result2[0].score >= 0.8, content="true")
+    inspect(result2[0].position, content="0")
+    inspect(result2[0].score >= 0.8, content="true")
   }
 }
 
@@ -172,17 +172,17 @@ test "levenshtein_fuzzy_search/max_results_limit" {
   let result = levenshtein(text, pattern, options)
 
   // 验证结果数量不超过 max_results
-  inspect!(result.length() <= options.max_results, content="true")
-  inspect!(result.length(), content="3")
+  inspect(result.length() <= options.max_results, content="true")
+  inspect(result.length(), content="3")
 
   // 确认找到了正确的匹配位置
   if result.length() >= 3 {
     // 第一个"cat"在位置0
-    inspect!(result[0].position, content="0")
+    inspect(result[0].position, content="0")
     // 第二个"cat"在位置8
-    inspect!(result[1].position, content="8")
+    inspect(result[1].position, content="8")
     // 第三个"cat"在位置16
-    inspect!(result[2].position, content="16")
+    inspect(result[2].position, content="16")
   }
 
   // 2. 测试在长结果数组上的截断逻辑
@@ -208,8 +208,8 @@ test "levenshtein_fuzzy_search/max_results_limit" {
     arr
   }
   let truncated = truncate_results(temp_result, 3)
-  inspect!(truncated.length(), content="3")
-  inspect!(truncated[0].position, content="0") // 分数最高的是第一项
+  inspect(truncated.length(), content="3")
+  inspect(truncated[0].position, content="0") // 分数最高的是第一项
 }
 
 ///|
@@ -228,9 +228,9 @@ test "levenshtein_fuzzy_search/max_results_one" {
   let result = levenshtein(text, pattern, options)
 
   // 应该只返回一个结果
-  inspect!(result.length(), content="1")
+  inspect(result.length(), content="1")
   if result.length() >= 1 {
-    inspect!(result[0].position, content="0") // 第一个"cat"
+    inspect(result[0].position, content="0") // 第一个"cat"
   }
 }
 
@@ -251,8 +251,8 @@ test "levenshtein_fuzzy_search/large_dataset" {
   let result = levenshtein(text, pattern, options)
 
   // 验证结果被限制在max_results
-  inspect!(result.length() <= options.max_results, content="true")
-  inspect!(result.length(), content="4")
+  inspect(result.length() <= options.max_results, content="true")
+  inspect(result.length(), content="4")
   for item in result {
     item |> println
   }

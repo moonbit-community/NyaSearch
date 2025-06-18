@@ -1,33 +1,31 @@
-package xunyoyo/NyaSearch
+package "xunyoyo/NyaSearch"
 
 // Values
-fn search(String, String, option~ : String = .., start~ : Int = .., end~ : Int = ..) -> Int!
+fn fuzzy_search(String, String, algorithm~ : String = .., options~ : FuzzyOptions = .., start~ : Int = .., end? : Int) -> Array[FuzzyMatch] raise
+
+fn search(String, String, option~ : String = .., start~ : Int = .., end? : Int) -> Int raise
 
 // Types and methods
-type EmptyPatternError
-impl Show for EmptyPatternError
+pub struct FuzzyMatch {
+  position : Int
+  score : Float
+  length : Int
+}
+impl Show for FuzzyMatch
 
-type InvalidRangeError
-impl Show for InvalidRangeError
+pub struct FuzzyOptions {
+  threshold : Float
+  max_distance : Int
+  case_sensitive : Bool
+  max_results : Int
+}
 
-type OptionChooseError
-impl Show for OptionChooseError
-
-type PatternTooLongError
-impl Show for PatternTooLongError
-
-type Prework
-
-pub(all) struct StringHash {
+pub struct StringHash {
   n : Int
   mod : Int64
   base : Int64
   hash : Array[Int64]
-  prework : Prework
-}
-impl StringHash {
-  get_hash(Self, Int, Int) -> Int64
-  new(mod~ : Int64 = .., base~ : Int64 = .., String) -> Self
+  p : Array[Int64]
 }
 
 // Type aliases

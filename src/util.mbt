@@ -6,7 +6,7 @@ pub struct FuzzyMatch {
 }
 
 ///|
-impl Show for FuzzyMatch with output(self, logger) {
+pub impl Show for FuzzyMatch with output(self, logger) {
   logger.write_string("FuzzyMatch { position: ")
   logger.write_string(self.position.to_string())
   logger.write_string(", score: ")
@@ -38,23 +38,23 @@ impl Compare for FuzzyMatch with compare(front, after) {
 test "FuzzyMatch::compare/equal_positions" {
   let fm1 = FuzzyMatch::{ position: 5, score: 0.8, length: 3 }
   let fm2 = FuzzyMatch::{ position: 5, score: 0.8, length: 4 }
-  inspect!(fm1.compare(fm2), content="0")
+  inspect(fm1.compare(fm2), content="0")
 }
 
 ///|
 test "FuzzyMatch::compare/different_scores" {
   let fm1 = FuzzyMatch::{ position: 2, score: 0.9, length: 3 }
   let fm2 = FuzzyMatch::{ position: 3, score: 0.7, length: 4 }
-  inspect!(fm1.compare(fm2), content="-1")
-  inspect!(fm2.compare(fm1), content="1")
+  inspect(fm1.compare(fm2), content="-1")
+  inspect(fm2.compare(fm1), content="1")
 }
 
 ///|
 test "FuzzyMatch::compare/same_score_different_positions" {
   let fm1 = FuzzyMatch::{ position: 1, score: 0.8, length: 3 }
   let fm2 = FuzzyMatch::{ position: 2, score: 0.8, length: 4 }
-  inspect!(fm1.compare(fm2), content="-1")
-  inspect!(fm2.compare(fm1), content="1")
+  inspect(fm1.compare(fm2), content="-1")
+  inspect(fm2.compare(fm1), content="1")
 }
 
 ///|
@@ -68,7 +68,7 @@ impl Eq for FuzzyMatch with op_equal(front, after) {
 test "FuzzyMatch::op_equal/identical" {
   let m1 = FuzzyMatch::{ position: 0, score: 1.0, length: 5 }
   let m2 = FuzzyMatch::{ position: 0, score: 1.0, length: 5 }
-  inspect!(m1 == m2, content="true")
+  inspect(m1 == m2, content="true")
 }
 
 ///|
@@ -77,9 +77,9 @@ test "FuzzyMatch::op_equal/different" {
   let pos_diff = FuzzyMatch::{ position: 1, score: 1.0, length: 5 }
   let score_diff = FuzzyMatch::{ position: 0, score: 0.9, length: 5 }
   let len_diff = FuzzyMatch::{ position: 0, score: 1.0, length: 4 }
-  inspect!(base == pos_diff, content="false")
-  inspect!(base == score_diff, content="false")
-  inspect!(base == len_diff, content="false")
+  inspect(base == pos_diff, content="false")
+  inspect(base == score_diff, content="false")
+  inspect(base == len_diff, content="false")
 }
 
 ///|
@@ -96,8 +96,8 @@ test "FuzzyMatch::op_equal/edge_cases" {
     score: 1.0,
     length: @int.max_value,
   }
-  inspect!(zero == zero_twin, content="true")
-  inspect!(max == max_twin, content="true")
+  inspect(zero == zero_twin, content="true")
+  inspect(max == max_twin, content="true")
 }
 
 ///|
@@ -115,7 +115,7 @@ fn compute_lps(pattern : String) -> Array[Int] {
   let mut i = 1
   let mut len = 0
   while i < m {
-    if pattern[i] == pattern[len] {
+    if pattern.charcode_at(i) == pattern.charcode_at(len) {
       len += 1
       lps[i] = len
       i += 1
@@ -135,7 +135,7 @@ fn compute_bad_char_table(pattern : String) -> Map[Char, Int] {
   let bad_char = Map::new()
   let mut j = 0
   while j < m - 1 {
-    bad_char.set(pattern[j], j)
+    bad_char.set(pattern.charcode_at(j).to_char().unwrap(), j)
     j += 1
   }
   return bad_char
@@ -164,7 +164,8 @@ fn compute_suffix_array(pattern : String, suffix : Array[Int]) -> Unit {
         g = i
       }
       f = i
-      while g >= 0 && pattern[g] == pattern[g + m - 1 - f] {
+      while g >= 0 &&
+            pattern.charcode_at(g) == pattern.charcode_at(g + m - 1 - f) {
         g -= 1
       }
       suffix[i] = f - g
@@ -215,10 +216,10 @@ fn auto(text : String, pattern : String) -> Int {
   let mut repeats = 0
   let unique_chars = Set::new()
   for i in 0..<pattern_len {
-    if unique_chars.contains(pattern[i]) {
+    if unique_chars.contains(pattern.charcode_at(i)) {
       repeats += 1
     } else {
-      unique_chars.add(pattern[i])
+      unique_chars.add(pattern.charcode_at(i))
     }
   }
   let repeat_ratio = repeats.to_float() / pattern_len.to_float()
@@ -239,15 +240,15 @@ fn auto(text : String, pattern : String) -> Int {
 ///|
 test "auto/short_pattern" {
   // 测试短模式（长度≤2）
-  inspect!(auto("hello world", "he"), content="0")
-  inspect!(auto("abcdefghijk", "k"), content="10")
+  inspect(auto("hello world", "he"), content="0")
+  inspect(auto("abcdefghijk", "k"), content="10")
 }
 
 ///|
 test "auto/short_text" {
   // 测试短文本（长度≤10）
-  inspect!(auto("hello", "ell"), content="1")
-  inspect!(auto("abc", "bc"), content="1")
+  inspect(auto("hello", "ell"), content="1")
+  inspect(auto("abc", "bc"), content="1")
 }
 
 ///|
@@ -255,7 +256,7 @@ test "auto/large_alphabet_long_pattern" {
   // 大字符集（>20）且长模式（>15）
   let pattern = "abcdefghijklmnopqrstu"
   let text = "xyz" + pattern + "123"
-  inspect!(auto(text, pattern), content="3")
+  inspect(auto(text, pattern), content="3")
 }
 
 ///|
@@ -263,7 +264,7 @@ test "auto/medium_size_high_repeat" {
   // 中等长度模式，高重复率（>0.3）
   let pattern = "ababcabc" // 8字符，重复率>0.3
   let text = "xxababcabcyy"
-  inspect!(auto(text, pattern), content="2")
+  inspect(auto(text, pattern), content="2")
 }
 
 ///|
@@ -271,7 +272,7 @@ test "auto/medium_size_low_repeat" {
   // 中等长度模式，低重复率（≤0.3）
   let pattern = "abcdefghij" // 10个不同字符
   let text = "xxabcdefghijyy"
-  inspect!(auto(text, pattern), content="2")
+  inspect(auto(text, pattern), content="2")
 }
 
 ///|
@@ -279,7 +280,7 @@ test "auto/default_path" {
   // 默认路径 - 小字符集，短模式但不太短
   let pattern = "abcab" // 5个字符，字符集为3
   let text = "ababcabxyz"
-  inspect!(auto(text, pattern), content="2")
+  inspect(auto(text, pattern), content="2")
 }
 
 ///|
@@ -289,30 +290,30 @@ test "auto/boundary_cases" {
   // 恰好字符集为10，长度为9
   let pattern1 = "abcdefghi"
   let text1 = pattern1 + pattern1
-  inspect!(auto(text1, pattern1), content="0")
+  inspect(auto(text1, pattern1), content="0")
 
   // 恰好字符集为10，长度为10
   let pattern2 = "abcdefghi1"
   let text2 = pattern2 + pattern2
-  inspect!(auto(text2, pattern2), content="0")
+  inspect(auto(text2, pattern2), content="0")
 
   // 恰好重复率为0.3
   let pattern3 = "abcabcdefg"
   let text3 = pattern3 + pattern3
-  inspect!(auto(text3, pattern3), content="0")
+  inspect(auto(text3, pattern3), content="0")
 }
 
 ///|
 test "auto/not_found" {
   // 测试未找到的情况
-  inspect!(auto("hello world", "xyz"), content="-1")
-  inspect!(auto("AABAACAADAABAAABAA", "XYZ"), content="-1")
+  inspect(auto("hello world", "xyz"), content="-1")
+  inspect(auto("AABAACAADAABAAABAA", "XYZ"), content="-1")
 }
 
 ///|
 test "auto/empty_text" {
   // 空文本情况
-  inspect!(auto("", "a"), content="-1")
+  inspect(auto("", "a"), content="-1")
 }
 
 ///|
@@ -322,12 +323,12 @@ test "auto/performance_cases" {
   // 长重复模式
   let repeated_pattern = "ababababab"
   let long_text = repeated_pattern + repeated_pattern
-  inspect!(auto(long_text, repeated_pattern), content="0")
+  inspect(auto(long_text, repeated_pattern), content="0")
 
   // 长唯一字符模式
   let unique_chars = "abcdefghijklmnopqrstuvwxyz"
   let long_unique_text = unique_chars + "xyz"
-  inspect!(auto(long_unique_text, unique_chars), content="0")
+  inspect(auto(long_unique_text, unique_chars), content="0")
 }
 
 ///|
@@ -351,6 +352,6 @@ test "compute_suffix_array/special_branch_coverage" {
 
     // 验证结果是否正确
     // 这里我们可以检查特定已知的值，或者简单地确保没有异常
-    inspect!(suffix.length() == m, content="true")
+    inspect(suffix.length() == m, content="true")
   }
 }

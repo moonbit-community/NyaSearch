@@ -20,7 +20,10 @@ fn StringHash::new(
   h[0] = 1
   for i = 1; i <= n; i = i + 1 {
     p[i] = p[i - 1] * base % mod
-    h[i] = (h[i - 1] * base + ((s[i - 1].to_int() - 'a'.to_int() + 1).to_int64())) % mod
+    h[i] = (
+        h[i - 1] * base + (s.charcode_at(i - 1) - 'a'.to_int() + 1).to_int64()
+      ) %
+      mod
   }
   StringHash::{ n, mod, base, hash: h, p } // 直接传入p数组
 }
@@ -42,7 +45,7 @@ fn rabin_karp(text : String, pattern : String) -> Int {
   let m = pattern.length()
   if m == 0 || n == 0 || m > n {
     return -1
-  }  
+  }
   let text_hash = StringHash::new(text)
   let pattern_hash = StringHash::new(pattern)
   let pattern_hash_value = pattern_hash.get_hash(0, m - 1)
@@ -51,7 +54,7 @@ fn rabin_karp(text : String, pattern : String) -> Int {
     if window_hash == pattern_hash_value {
       let mut is_match = true
       for j in 0..<m {
-        if text[i + j] != pattern[j] {
+        if text.charcode_at(i + j) != pattern.charcode_at(j) {
           is_match = false
           break
         }
@@ -66,20 +69,20 @@ fn rabin_karp(text : String, pattern : String) -> Int {
 
 ///|
 test "boyer_moore/basic" {
-  inspect!(rabin_karp("hello world", "world"), content="6")
-  inspect!(rabin_karp("AABAACAADAABAAABAA", "AABA"), content="0")
-  inspect!(rabin_karp("THIS IS A TEST TEXT", "TEST"), content="10")
+  inspect(rabin_karp("hello world", "world"), content="6")
+  inspect(rabin_karp("AABAACAADAABAAABAA", "AABA"), content="0")
+  inspect(rabin_karp("THIS IS A TEST TEXT", "TEST"), content="10")
 }
 
 ///|
 test "boyer_moore/pattern_not_found" {
-  inspect!(rabin_karp("hello world", "moon"), content="-1")
-  inspect!(rabin_karp("AABAACAADAABAAABAA", "ZZZ"), content="-1")
+  inspect(rabin_karp("hello world", "moon"), content="-1")
+  inspect(rabin_karp("AABAACAADAABAAABAA", "ZZZ"), content="-1")
 }
 
-///
+///|
 test "rabin_karp/empty" {
-  inspect!(rabin_karp("", ""), content="-1")
-  inspect!(rabin_karp("hello world", ""), content="-1")
-  inspect!(rabin_karp("", "world"), content="-1")
+  inspect(rabin_karp("", ""), content="-1")
+  inspect(rabin_karp("hello world", ""), content="-1")
+  inspect(rabin_karp("", "world"), content="-1")
 }
