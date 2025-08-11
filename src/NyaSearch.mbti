@@ -1,9 +1,12 @@
+// Generated using `moon info`, DON'T EDIT IT
 package "xunyoyo/NyaSearch"
 
 // Values
-fn fuzzy_search(String, String, algorithm~ : String = .., options~ : FuzzyOptions = .., start~ : Int = .., end? : Int) -> Array[FuzzyMatch] raise
+fn fuzzy_search(String, String, algorithm? : String, options? : FuzzyOptions, start? : Int, end? : Int) -> Array[FuzzyMatch] raise
 
-fn search(String, String, option~ : String = .., start~ : Int = .., end? : Int) -> Int raise
+fn search(String, String, option? : String, start? : Int, end? : Int) -> Int raise
+
+// Errors
 
 // Types and methods
 pub struct FuzzyMatch {
