@@ -11,7 +11,7 @@ pub struct StringHash {
 fn StringHash::new(
   mod~ : Int64 = 998244353,
   base~ : Int64 = 131,
-  s : String
+  s : String,
 ) -> StringHash {
   let n = s.length()
   let p = Array::make(n + 1, 0L)

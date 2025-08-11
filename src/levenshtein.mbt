@@ -2,7 +2,7 @@
 fn levenshtein_distance_threshold(
   s : String,
   t : String,
-  threshold : Int
+  threshold : Int,
 ) -> Int {
   let m = s.length()
   let n = t.length()
@@ -104,7 +104,7 @@ test "levenshtein_distance_threshold/length_difference_optimization" {
 fn levenshtein(
   text : String,
   pattern : String,
-  options : FuzzyOptions
+  options : FuzzyOptions,
 ) -> Array[FuzzyMatch] {
   let result = Array::new()
   let n = text.length()
@@ -199,7 +199,7 @@ test "levenshtein_fuzzy_search/max_results_limit" {
   // 创建一个临时函数模拟结果处理
   let truncate_results = fn(
     arr : Array[FuzzyMatch],
-    max : Int
+    max : Int,
   ) -> Array[FuzzyMatch] {
     arr.sort()
     if arr.length() > max {

@@ -3,7 +3,7 @@ fn jaro_winkler_similarity(
   s1 : String,
   s2 : String,
   prefix_scale~ : Float = 0.1,
-  prefix_max~ : Int = 4
+  prefix_max~ : Int = 4,
 ) -> Float {
   let len1 = s1.length()
   let len2 = s2.length()
@@ -110,7 +110,7 @@ test "jaro_winkler_similarity/prefix_calculation" {
 fn jaro_winkler(
   text : String,
   pattern : String,
-  options : FuzzyOptions
+  options : FuzzyOptions,
 ) -> Array[FuzzyMatch] {
   let result = Array::new()
   let n = text.length()
