@@ -7,15 +7,15 @@ fn jaro_winkler_similarity(
 ) -> Float {
   let len1 = s1.length()
   let len2 = s2.length()
-  let match_window = @math.maximum(0, @math.maximum(len1, len2) / 2 - 1)
+  let match_window = @cmp.maximum(0, @cmp.maximum(len1, len2) / 2 - 1)
   let match1 = Array::make(len1, false)
   let match2 = Array::make(len2, false)
   let mut matches = 0
   for i = 0; i < len1; i = i + 1 {
-    let start = @math.maximum(0, i - match_window)
-    let end = @math.minimum(len2, i + match_window + 1)
+    let start = @cmp.maximum(0, i - match_window)
+    let end = @cmp.minimum(len2, i + match_window + 1)
     for j = start; j < end; j = j + 1 {
-      if not(match2[j]) && s1.charcode_at(i) == s2.charcode_at(j) {
+      if not(match2[j]) && s1[i] == s2[j] {
         match1[i] = true
         match2[j] = true
         matches = matches + 1
@@ -33,7 +33,7 @@ fn jaro_winkler_similarity(
       while not(match2[j]) {
         j = j + 1
       }
-      if s1.charcode_at(i) != s2.charcode_at(j) {
+      if s1[i] != s2[j] {
         transpositions = transpositions + 1
       }
       j = j + 1
@@ -48,9 +48,9 @@ fn jaro_winkler_similarity(
     ) /
     3.0
   let mut prefix_len = 0
-  let max_prefix = @math.minimum(prefix_max, @math.minimum(len1, len2))
+  let max_prefix = @cmp.minimum(prefix_max, @cmp.minimum(len1, len2))
   for i = 0; i < max_prefix; i = i + 1 {
-    if s1.charcode_at(i) == s2.charcode_at(i) {
+    if s1[i] == s2[i] {
       prefix_len = prefix_len + 1
     } else {
       break
@@ -122,7 +122,7 @@ fn jaro_winkler(
       result.push(FuzzyMatch::{ position: i, score: 1.0, length: m })
       continue
     }
-    let window_end = @math.minimum(i + max_window, n)
+    let window_end = @cmp.minimum(i + max_window, n)
     let candidate = text.substring(start=i, end=window_end)
     let similarity = jaro_winkler_similarity(candidate, pattern)
     if similarity >= options.threshold {

@@ -46,7 +46,7 @@ pub fn search(
   start~ : Int = 0,
   end? : Int,
 ) -> Int raise Error {
-  let end = end.or(text.length())
+  let end = end.unwrap_or(text.length())
   if pattern.is_empty() {
     raise EmptyPatternError("Empty search pattern is not allowed")
   } else if text.is_empty() {
@@ -191,7 +191,7 @@ pub fn fuzzy_search(
   start~ : Int = 0,
   end? : Int,
 ) -> Array[FuzzyMatch] raise Error {
-  let end = end.or(text.length())
+  let end = end.unwrap_or(text.length())
   if pattern.is_empty() {
     raise EmptyPatternError("Empty search pattern is not allowed")
   } else if text.is_empty() {
