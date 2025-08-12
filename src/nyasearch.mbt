@@ -44,9 +44,9 @@ pub fn search(
   pattern : String,
   option~ : String = "auto",
   start~ : Int = 0,
-  end? : Int
+  end? : Int,
 ) -> Int raise Error {
-  let end = end.or(text.length())
+  let end = end.unwrap_or(text.length())
   if pattern.is_empty() {
     raise EmptyPatternError("Empty search pattern is not allowed")
   } else if text.is_empty() {
@@ -189,9 +189,9 @@ pub fn fuzzy_search(
     max_results: 10,
   },
   start~ : Int = 0,
-  end? : Int
+  end? : Int,
 ) -> Array[FuzzyMatch] raise Error {
-  let end = end.or(text.length())
+  let end = end.unwrap_or(text.length())
   if pattern.is_empty() {
     raise EmptyPatternError("Empty search pattern is not allowed")
   } else if text.is_empty() {

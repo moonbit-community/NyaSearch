@@ -115,7 +115,7 @@ fn compute_lps(pattern : String) -> Array[Int] {
   let mut i = 1
   let mut len = 0
   while i < m {
-    if pattern.charcode_at(i) == pattern.charcode_at(len) {
+    if pattern[i] == pattern[len] {
       len += 1
       lps[i] = len
       i += 1
@@ -135,7 +135,7 @@ fn compute_bad_char_table(pattern : String) -> Map[Char, Int] {
   let bad_char = Map::new()
   let mut j = 0
   while j < m - 1 {
-    bad_char.set(pattern.charcode_at(j).to_char().unwrap(), j)
+    bad_char.set(Int::unsafe_to_char(pattern[j]), j)
     j += 1
   }
   return bad_char
@@ -144,7 +144,7 @@ fn compute_bad_char_table(pattern : String) -> Map[Char, Int] {
 ///|
 fn bad_char_shift(bad_char : Map[Char, Int], c : Char, j : Int) -> Int {
   match bad_char.get(c) {
-    Some(bc_pos) => @math.maximum(1, j - bc_pos)
+    Some(bc_pos) => @cmp.maximum(1, j - bc_pos)
     None => j + 1
   }
 }
@@ -164,8 +164,7 @@ fn compute_suffix_array(pattern : String, suffix : Array[Int]) -> Unit {
         g = i
       }
       f = i
-      while g >= 0 &&
-            pattern.charcode_at(g) == pattern.charcode_at(g + m - 1 - f) {
+      while g >= 0 && pattern[g] == pattern[g + m - 1 - f] {
         g -= 1
       }
       suffix[i] = f - g
@@ -216,10 +215,10 @@ fn auto(text : String, pattern : String) -> Int {
   let mut repeats = 0
   let unique_chars = Set::new()
   for i in 0..<pattern_len {
-    if unique_chars.contains(pattern.charcode_at(i)) {
+    if unique_chars.contains(pattern[i]) {
       repeats += 1
     } else {
-      unique_chars.add(pattern.charcode_at(i))
+      unique_chars.add(pattern[i])
     }
   }
   let repeat_ratio = repeats.to_float() / pattern_len.to_float()

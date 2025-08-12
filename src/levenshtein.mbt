@@ -2,7 +2,7 @@
 fn levenshtein_distance_threshold(
   s : String,
   t : String,
-  threshold : Int
+  threshold : Int,
 ) -> Int {
   let m = s.length()
   let n = t.length()
@@ -18,13 +18,13 @@ fn levenshtein_distance_threshold(
     curr[0] = i
     let mut row_min = m + n
     for j = 1; j <= n; j = j + 1 {
-      if s.charcode_at(i - 1) == t.charcode_at(j - 1) {
+      if s[i - 1] == t[j - 1] {
         curr[j] = prev[j - 1]
       } else {
         curr[j] = 1 +
-          @math.minimum(prev[j - 1], @math.minimum(curr[j - 1], prev[j]))
+          @cmp.minimum(prev[j - 1], @cmp.minimum(curr[j - 1], prev[j]))
       }
-      row_min = @math.minimum(row_min, curr[j])
+      row_min = @cmp.minimum(row_min, curr[j])
     }
     if row_min > threshold {
       return threshold + 1
@@ -104,7 +104,7 @@ test "levenshtein_distance_threshold/length_difference_optimization" {
 fn levenshtein(
   text : String,
   pattern : String,
-  options : FuzzyOptions
+  options : FuzzyOptions,
 ) -> Array[FuzzyMatch] {
   let result = Array::new()
   let n = text.length()
@@ -117,7 +117,7 @@ fn levenshtein(
       options.max_distance,
     )
     if distance <= options.max_distance {
-      let max_len = @math.maximum(m, candidate.length()).to_float()
+      let max_len = @cmp.maximum(m, candidate.length()).to_float()
       let score = 1.0.to_float() - distance.to_float() / max_len
       if score >= options.threshold {
         result.push(FuzzyMatch::{ position: i, score, length: m })
@@ -199,7 +199,7 @@ test "levenshtein_fuzzy_search/max_results_limit" {
   // 创建一个临时函数模拟结果处理
   let truncate_results = fn(
     arr : Array[FuzzyMatch],
-    max : Int
+    max : Int,
   ) -> Array[FuzzyMatch] {
     arr.sort()
     if arr.length() > max {
