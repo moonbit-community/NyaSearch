@@ -9,8 +9,8 @@ pub struct StringHash {
 
 ///|
 fn StringHash::new(
-  mod~ : Int64 = 998244353,
-  base~ : Int64 = 131,
+  mod? : Int64 = 998244353,
+  base? : Int64 = 131,
   s : String,
 ) -> StringHash {
   let n = s.length()
