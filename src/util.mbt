@@ -58,7 +58,7 @@ test "FuzzyMatch::compare/same_score_different_positions" {
 }
 
 ///|
-impl Eq for FuzzyMatch with op_equal(front, after) {
+impl Eq for FuzzyMatch with equal(front, after) {
   front.position == after.position &&
   front.score == after.score &&
   front.length == after.length
@@ -222,7 +222,7 @@ fn auto(text : String, pattern : String) -> Int {
     }
   }
   let repeat_ratio = repeats.to_float() / pattern_len.to_float()
-  let alphabet_size = unique_chars.size()
+  let alphabet_size = unique_chars.length()
   if alphabet_size > 20 && pattern_len > 15 {
     return boyer_moore(text, pattern)
   }

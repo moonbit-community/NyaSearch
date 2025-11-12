@@ -25,21 +25,21 @@ test "panic @xunyoyo/NyaSearch.search/invalid_cases" {
 }
 
 ///|
-test "panic @xunyoyo/NyaSearch.search/invalid_cases" {
+test "panic @xunyoyo/NyaSearch.search/invalid_cases_option" {
   ignore(@xunyoyo/NyaSearch.search("hello", "world", option="invalid")) // invalid option
 }
 
 ///|
-test "panic @xunyoyo/NyaSearch.search/invalid_cases" {
+test "panic @xunyoyo/NyaSearch.search/invalid_cases_range" {
   ignore(@xunyoyo/NyaSearch.search("hello", "h", start=5, end=3)) // invalid range
 }
 
 ///|
-test "panic @xunyoyo/NyaSearch.search/invalid_cases" {
+test "panic @xunyoyo/NyaSearch.search/invalid_cases_start" {
   ignore(@xunyoyo/NyaSearch.search("hello", "h", start=-1, end=5)) // start negative
 }
 
 ///|
-test "panic @xunyoyo/NyaSearch.search/invalid_cases" {
+test "panic @xunyoyo/NyaSearch.search/invalid_cases_end" {
   ignore(@xunyoyo/NyaSearch.search("hello", "h", start=0, end=6)) // end exceeds length
 }

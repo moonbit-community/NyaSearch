@@ -105,12 +105,12 @@ fn levenshtein(
   text : String,
   pattern : String,
   options : FuzzyOptions,
-) -> Array[FuzzyMatch] {
+) -> Array[FuzzyMatch] raise Error {
   let result = Array::new()
   let n = text.length()
   let m = pattern.length()
   for i = 0; i <= n - m; i = i + 1 {
-    let candidate = text.substring(start=i, end=i + m)
+    let candidate = text[i:(i + m)].to_string()
     let distance = levenshtein_distance_threshold(
       candidate,
       pattern,

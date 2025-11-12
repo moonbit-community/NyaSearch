@@ -1,0 +1,37 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "xunyoyo/NyaSearch"
+
+// Values
+fn fuzzy_search(String, String, algorithm? : String, options? : FuzzyOptions, start? : Int, end? : Int) -> Array[FuzzyMatch] raise
+
+fn search(String, String, option? : String, start? : Int, end? : Int) -> Int raise
+
+// Errors
+
+// Types and methods
+pub struct FuzzyMatch {
+  position : Int
+  score : Float
+  length : Int
+}
+impl Show for FuzzyMatch
+
+pub struct FuzzyOptions {
+  threshold : Float
+  max_distance : Int
+  case_sensitive : Bool
+  max_results : Int
+}
+
+pub struct StringHash {
+  n : Int
+  mod : Int64
+  base : Int64
+  hash : Array[Int64]
+  p : Array[Int64]
+}
+
+// Type aliases
+
+// Traits
+
