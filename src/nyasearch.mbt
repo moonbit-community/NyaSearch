@@ -58,7 +58,7 @@ pub fn search(
       "Invalid search range: ensure start <= end and both are within text bounds",
     )
   }
-  let subtext = text.substring(start~, end~)
+  let subtext = text[start:end].to_string()
   let idx = match option {
     "auto" => auto(subtext, pattern)
     "kmp" => kmp(subtext, pattern)
@@ -102,7 +102,7 @@ test "panic search/invalid" {
 }
 
 ///|
-test "search/basic" {
+test "search/basic_1" {
   inspect(search("hello world", "world"), content="6")
   inspect(search("AABAACAADAABAAABAA", "AABA"), content="0")
   inspect(search("THIS IS A TEST TEXT", "TEST"), content="10")
@@ -202,9 +202,9 @@ pub fn fuzzy_search(
     )
   }
   let search_text = if options.case_sensitive {
-    text.substring(start~, end~)
+    text[start:end].to_string()
   } else {
-    text.substring(start~, end~).to_lower()
+    text[start:end].to_string().to_lower()
   }
   let search_pattern = if options.case_sensitive {
     pattern
@@ -269,7 +269,7 @@ test "panic fuzzy_search/invalid" {
 }
 
 ///|
-test "fuzzy_search/basic" {
+test "fuzzy_search/basic_1" {
   let options = FuzzyOptions::{
     threshold: 0.7,
     max_distance: 2,

@@ -58,21 +58,21 @@ test "FuzzyMatch::compare/same_score_different_positions" {
 }
 
 ///|
-impl Eq for FuzzyMatch with op_equal(front, after) {
+impl Eq for FuzzyMatch with equal(front, after) {
   front.position == after.position &&
   front.score == after.score &&
   front.length == after.length
 }
 
 ///|
-test "FuzzyMatch::op_equal/identical" {
+test "FuzzyMatch::equal/identical" {
   let m1 = FuzzyMatch::{ position: 0, score: 1.0, length: 5 }
   let m2 = FuzzyMatch::{ position: 0, score: 1.0, length: 5 }
   inspect(m1 == m2, content="true")
 }
 
 ///|
-test "FuzzyMatch::op_equal/different" {
+test "FuzzyMatch::equal/different" {
   let base = FuzzyMatch::{ position: 0, score: 1.0, length: 5 }
   let pos_diff = FuzzyMatch::{ position: 1, score: 1.0, length: 5 }
   let score_diff = FuzzyMatch::{ position: 0, score: 0.9, length: 5 }
@@ -83,7 +83,7 @@ test "FuzzyMatch::op_equal/different" {
 }
 
 ///|
-test "FuzzyMatch::op_equal/edge_cases" {
+test "FuzzyMatch::equal/edge_cases" {
   let zero = FuzzyMatch::{ position: 0, score: 0.0, length: 0 }
   let zero_twin = FuzzyMatch::{ position: 0, score: 0.0, length: 0 }
   let max = FuzzyMatch::{
@@ -222,7 +222,7 @@ fn auto(text : String, pattern : String) -> Int {
     }
   }
   let repeat_ratio = repeats.to_float() / pattern_len.to_float()
-  let alphabet_size = unique_chars.size()
+  let alphabet_size = unique_chars.length()
   if alphabet_size > 20 && pattern_len > 15 {
     return boyer_moore(text, pattern)
   }
