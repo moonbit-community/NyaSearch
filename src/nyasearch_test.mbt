@@ -20,26 +20,26 @@ test "@xunyoyo/NyaSearch.search/empty_text" {
 }
 
 ///|
-test "panic @xunyoyo/NyaSearch.search/invalid_cases" {
+test "panic @xunyoyo/NyaSearch.search/invalid_case_1" {
   ignore(@xunyoyo/NyaSearch.search("hello", "")) // empty pattern
 }
 
 ///|
-test "panic @xunyoyo/NyaSearch.search/invalid_cases" {
+test "panic @xunyoyo/NyaSearch.search/invalid_case_2" {
   ignore(@xunyoyo/NyaSearch.search("hello", "world", option="invalid")) // invalid option
 }
 
 ///|
-test "panic @xunyoyo/NyaSearch.search/invalid_cases" {
+test "panic @xunyoyo/NyaSearch.search/invalid_case_3" {
   ignore(@xunyoyo/NyaSearch.search("hello", "h", start=5, end=3)) // invalid range
 }
 
 ///|
-test "panic @xunyoyo/NyaSearch.search/invalid_cases" {
+test "panic @xunyoyo/NyaSearch.search/invalid_case_4" {
   ignore(@xunyoyo/NyaSearch.search("hello", "h", start=-1, end=5)) // start negative
 }
 
 ///|
-test "panic @xunyoyo/NyaSearch.search/invalid_cases" {
+test "panic @xunyoyo/NyaSearch.search/invalid_case_5" {
   ignore(@xunyoyo/NyaSearch.search("hello", "h", start=0, end=6)) // end exceeds length
 }

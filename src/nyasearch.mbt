@@ -102,7 +102,7 @@ test "panic search/invalid" {
 }
 
 ///|
-test "search/basic_1" {
+test "search/extra" {
   inspect(search("hello world", "world"), content="6")
   inspect(search("AABAACAADAABAAABAA", "AABA"), content="0")
   inspect(search("THIS IS A TEST TEXT", "TEST"), content="10")
@@ -167,17 +167,8 @@ test "panic search/invalid_range" {
 /// or end > text length)
 /// * `OptionChooseError` if an invalid algorithm option is provided
 ///
-/// Example:
+/// Example: See test cases below
 ///
-/// ```moonbit
-/// let options = FuzzyOptions::{
-///   threshold: 0.8,
-///   max_distance: 1,
-///   case_sensitive: false,
-///   max_results: 5
-/// }
-/// inspect(fuzzy_search("Hello World", "helo", options~), content="[]")
-/// ```
 pub fn fuzzy_search(
   text : String,
   pattern : String,
@@ -269,7 +260,7 @@ test "panic fuzzy_search/invalid" {
 }
 
 ///|
-test "fuzzy_search/basic_1" {
+test "fuzzy_search/extra" {
   let options = FuzzyOptions::{
     threshold: 0.7,
     max_distance: 2,
