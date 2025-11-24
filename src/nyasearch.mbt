@@ -58,7 +58,7 @@ pub fn search(
       "Invalid search range: ensure start <= end and both are within text bounds",
     )
   }
-  let subtext = text.substring(start~, end~)
+  let subtext = text[start:end].to_string()
   let idx = match option {
     "auto" => auto(subtext, pattern)
     "kmp" => kmp(subtext, pattern)
@@ -102,7 +102,7 @@ test "panic search/invalid" {
 }
 
 ///|
-test "search/basic" {
+test "search/extra" {
   inspect(search("hello world", "world"), content="6")
   inspect(search("AABAACAADAABAAABAA", "AABA"), content="0")
   inspect(search("THIS IS A TEST TEXT", "TEST"), content="10")
@@ -167,17 +167,8 @@ test "panic search/invalid_range" {
 /// or end > text length)
 /// * `OptionChooseError` if an invalid algorithm option is provided
 ///
-/// Example:
+/// Example: See test cases below
 ///
-/// ```moonbit
-/// let options = FuzzyOptions::{
-///   threshold: 0.8,
-///   max_distance: 1,
-///   case_sensitive: false,
-///   max_results: 5
-/// }
-/// inspect(fuzzy_search("Hello World", "helo", options~), content="[]")
-/// ```
 pub fn fuzzy_search(
   text : String,
   pattern : String,
@@ -202,9 +193,9 @@ pub fn fuzzy_search(
     )
   }
   let search_text = if options.case_sensitive {
-    text.substring(start~, end~)
+    text[start:end].to_string()
   } else {
-    text.substring(start~, end~).to_lower()
+    text[start:end].to_string().to_lower()
   }
   let search_pattern = if options.case_sensitive {
     pattern
@@ -269,7 +260,7 @@ test "panic fuzzy_search/invalid" {
 }
 
 ///|
-test "fuzzy_search/basic" {
+test "fuzzy_search/extra" {
   let options = FuzzyOptions::{
     threshold: 0.7,
     max_distance: 2,
