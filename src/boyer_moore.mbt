@@ -10,13 +10,17 @@ fn boyer_moore(text : String, pattern : String) -> Int {
   let mut i = 0
   while i <= n - m {
     let mut j = m - 1
-    while j >= 0 && pattern[j] == text[i + j] {
+    while j >= 0 && pattern.code_unit_at(j) == text.code_unit_at(i + j) {
       j -= 1
     }
     if j < 0 {
       return i
     } else {
-      let bc_shift = bad_char_shift(bad_char, text[i + j].to_char().unwrap(), j)
+      let bc_shift = bad_char_shift(
+        bad_char,
+        text.code_unit_at(i + j).to_int().to_char().unwrap(),
+        j,
+      )
       let gs_shift = good_suffix[j]
       i += @cmp.maximum(bc_shift, gs_shift)
     }

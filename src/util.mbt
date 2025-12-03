@@ -115,7 +115,7 @@ fn compute_lps(pattern : String) -> Array[Int] {
   let mut i = 1
   let mut len = 0
   while i < m {
-    if pattern[i] == pattern[len] {
+    if pattern.code_unit_at(i) == pattern.code_unit_at(len) {
       len += 1
       lps[i] = len
       i += 1
@@ -135,7 +135,7 @@ fn compute_bad_char_table(pattern : String) -> Map[Char, Int] {
   let bad_char = Map::new()
   let mut j = 0
   while j < m - 1 {
-    bad_char.set(Int::unsafe_to_char(pattern[j]), j)
+    bad_char.set(Int::unsafe_to_char(pattern.code_unit_at(j).to_int()), j)
     j += 1
   }
   return bad_char
@@ -164,7 +164,8 @@ fn compute_suffix_array(pattern : String, suffix : Array[Int]) -> Unit {
         g = i
       }
       f = i
-      while g >= 0 && pattern[g] == pattern[g + m - 1 - f] {
+      while g >= 0 &&
+            pattern.code_unit_at(g) == pattern.code_unit_at(g + m - 1 - f) {
         g -= 1
       }
       suffix[i] = f - g
@@ -215,13 +216,13 @@ fn auto(text : String, pattern : String) -> Int {
   let mut repeats = 0
   let unique_chars = Set::new()
   for i in 0..<pattern_len {
-    if unique_chars.contains(pattern[i]) {
+    if unique_chars.contains(pattern.code_unit_at(i)) {
       repeats += 1
     } else {
-      unique_chars.add(pattern[i])
+      unique_chars.add(pattern.code_unit_at(i))
     }
   }
-  let repeat_ratio = repeats.to_float() / pattern_len.to_float()
+  let repeat_ratio = Double::from_int(repeats) / Double::from_int(pattern_len)
   let alphabet_size = unique_chars.length()
   if alphabet_size > 20 && pattern_len > 15 {
     return boyer_moore(text, pattern)

@@ -18,7 +18,7 @@ fn levenshtein_distance_threshold(
     curr[0] = i
     let mut row_min = m + n
     for j = 1; j <= n; j = j + 1 {
-      if s[i - 1] == t[j - 1] {
+      if s.code_unit_at(i - 1) == t.code_unit_at(j - 1) {
         curr[j] = prev[j - 1]
       } else {
         curr[j] = 1 +
@@ -117,8 +117,8 @@ fn levenshtein(
       options.max_distance,
     )
     if distance <= options.max_distance {
-      let max_len = @cmp.maximum(m, candidate.length()).to_float()
-      let score = 1.0.to_float() - distance.to_float() / max_len
+      let max_len = Double::from_int(@cmp.maximum(m, candidate.length()))
+      let score = Float::from_double(1.0 - Double::from_int(distance) / max_len)
       if score >= options.threshold {
         result.push(FuzzyMatch::{ position: i, score, length: m })
       }
@@ -191,7 +191,7 @@ test "levenshtein_fuzzy_search/max_results_limit" {
   for i = 0; i < 5; i = i + 1 {
     temp_result.push(FuzzyMatch::{
       position: i,
-      score: (5 - i).to_float() / 5,
+      score: Float::from_double(Double::from_int(5 - i) / 5.0),
       length: pattern.length(),
     })
   }

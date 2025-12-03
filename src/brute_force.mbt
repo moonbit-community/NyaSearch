@@ -5,7 +5,7 @@ fn brute_force(text : String, pattern : String) -> Int {
   for i = 0; i < text_len - pattern_len + 1; i = i + 1 {
     let mut found = true
     for j = 0; j < pattern_len; j = j + 1 {
-      if text[i + j] != pattern[j] {
+      if text.code_unit_at(i + j) != pattern.code_unit_at(j) {
         found = false
         break
       }
