@@ -40,11 +40,11 @@ fn jaro_winkler_similarity(
     }
   }
   transpositions = transpositions / 2
-  let m = Double::from_int(matches)
+  let m = Float::from_int(matches)
   let jaro = (
-      m / Double::from_int(len1) +
-      m / Double::from_int(len2) +
-      (m - Double::from_int(transpositions)) / m
+      m / Float::from_int(len1) +
+      m / Float::from_int(len2) +
+      (m - Float::from_int(transpositions)) / m
     ) /
     3.0
   let mut prefix_len = 0
@@ -56,10 +56,7 @@ fn jaro_winkler_similarity(
       break
     }
   }
-  Float::from_double(
-    jaro +
-    Double::from_int(prefix_len) * prefix_scale.to_double() * (1.0 - jaro),
-  )
+  jaro + Float::from_int(prefix_len) * prefix_scale * (1.0 - jaro)
 }
 
 ///|

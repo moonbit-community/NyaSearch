@@ -222,7 +222,7 @@ fn auto(text : String, pattern : String) -> Int {
       unique_chars.add(pattern.code_unit_at(i))
     }
   }
-  let repeat_ratio = Double::from_int(repeats) / Double::from_int(pattern_len)
+  let repeat_ratio = Float::from_int(repeats) / Float::from_int(pattern_len)
   let alphabet_size = unique_chars.length()
   if alphabet_size > 20 && pattern_len > 15 {
     return boyer_moore(text, pattern)
