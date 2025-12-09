@@ -2,8 +2,8 @@
 fn jaro_winkler_similarity(
   s1 : String,
   s2 : String,
-  prefix_scale~ : Float = 0.1,
-  prefix_max~ : Int = 4,
+  prefix_scale? : Float = 0.1,
+  prefix_max? : Int = 4,
 ) -> Float {
   let len1 = s1.length()
   let len2 = s2.length()
@@ -15,7 +15,7 @@ fn jaro_winkler_similarity(
     let start = @cmp.maximum(0, i - match_window)
     let end = @cmp.minimum(len2, i + match_window + 1)
     for j = start; j < end; j = j + 1 {
-      if not(match2[j]) && s1[i] == s2[j] {
+      if not(match2[j]) && s1.code_unit_at(i) == s2.code_unit_at(j) {
         match1[i] = true
         match2[j] = true
         matches = matches + 1
@@ -33,30 +33,30 @@ fn jaro_winkler_similarity(
       while not(match2[j]) {
         j = j + 1
       }
-      if s1[i] != s2[j] {
+      if s1.code_unit_at(i) != s2.code_unit_at(j) {
         transpositions = transpositions + 1
       }
       j = j + 1
     }
   }
   transpositions = transpositions / 2
-  let m = matches.to_float()
+  let m = Float::from_int(matches)
   let jaro = (
-      m / len1.to_float() +
-      m / len2.to_float() +
-      (m - transpositions.to_float()) / m
+      m / Float::from_int(len1) +
+      m / Float::from_int(len2) +
+      (m - Float::from_int(transpositions)) / m
     ) /
     3.0
   let mut prefix_len = 0
   let max_prefix = @cmp.minimum(prefix_max, @cmp.minimum(len1, len2))
   for i = 0; i < max_prefix; i = i + 1 {
-    if s1[i] == s2[i] {
+    if s1.code_unit_at(i) == s2.code_unit_at(i) {
       prefix_len = prefix_len + 1
     } else {
       break
     }
   }
-  jaro + prefix_len.to_float() * prefix_scale * (1.0.to_float() - jaro)
+  jaro + Float::from_int(prefix_len) * prefix_scale * (1.0 - jaro)
 }
 
 ///|

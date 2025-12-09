@@ -9,8 +9,8 @@ pub struct StringHash {
 
 ///|
 fn StringHash::new(
-  mod~ : Int64 = 998244353,
-  base~ : Int64 = 131,
+  mod? : Int64 = 998244353,
+  base? : Int64 = 131,
   s : String,
 ) -> StringHash {
   let n = s.length()
@@ -20,7 +20,11 @@ fn StringHash::new(
   h[0] = 1
   for i = 1; i <= n; i = i + 1 {
     p[i] = p[i - 1] * base % mod
-    h[i] = (h[i - 1] * base + (s[i - 1] - 'a'.to_int() + 1).to_int64()) % mod
+    h[i] = (
+        h[i - 1] * base +
+        (s.code_unit_at(i - 1).to_int() - 'a'.to_int() + 1).to_int64()
+      ) %
+      mod
   }
   StringHash::{ n, mod, base, hash: h, p } // 直接传入p数组
 }
@@ -51,7 +55,7 @@ fn rabin_karp(text : String, pattern : String) -> Int {
     if window_hash == pattern_hash_value {
       let mut is_match = true
       for j in 0..<m {
-        if text[i + j] != pattern[j] {
+        if text.code_unit_at(i + j) != pattern.code_unit_at(j) {
           is_match = false
           break
         }

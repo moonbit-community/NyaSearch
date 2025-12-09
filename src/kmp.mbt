@@ -9,13 +9,13 @@ fn kmp(text : String, pattern : String) -> Int {
   let mut i = 0
   let mut j = 0
   while i < n {
-    if pattern[j] == text[i] {
+    if pattern.code_unit_at(j) == text.code_unit_at(i) {
       i += 1
       j += 1
     }
     if j == m {
       return i - j
-    } else if i < n && pattern[j] != text[i] {
+    } else if i < n && pattern.code_unit_at(j) != text.code_unit_at(i) {
       if j != 0 {
         j = lps[j - 1]
       } else {
