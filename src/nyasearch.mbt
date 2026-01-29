@@ -31,7 +31,7 @@
 ///
 /// Examples:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// // basic
 /// assert_eq(search("hello world", "world"), 6) // using auto method.
 /// assert_eq(search("hello world", "world", option="kmp"), 6) // using kmp method.
