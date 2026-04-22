@@ -141,13 +141,13 @@ test "levenshtein_fuzzy_search/basic_matching" {
   }
   let result1 = levenshtein("hello world", "hello", options)
   inspect(result1.length(), content="1")
-  if not(result1.is_empty()) {
+  if !result1.is_empty() {
     inspect(result1[0].position, content="0")
     inspect(result1[0].score, content="1")
   }
   let result2 = levenshtein("hello world", "hallo", options)
   inspect(result2.length() > 0, content="true")
-  if not(result2.is_empty()) {
+  if !result2.is_empty() {
     inspect(result2[0].position, content="0")
     inspect(result2[0].score >= 0.8, content="true")
   }

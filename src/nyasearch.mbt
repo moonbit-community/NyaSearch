@@ -222,7 +222,7 @@ test "fuzzy_search/basic" {
   }
   let result = fuzzy_search("Hello World", "Hello", options~)
   inspect(result.length(), content="1")
-  if not(result.is_empty()) {
+  if !result.is_empty() {
     inspect(result[0].position, content="0")
     inspect(result[0].score >= 0.8, content="true")
   }
@@ -238,7 +238,7 @@ test "fuzzy_search/range" {
   }
   let result = fuzzy_search("Hello World Hello", "hello", options~, start=6)
   inspect(result.length(), content="1")
-  if not(result.is_empty()) {
+  if !result.is_empty() {
     inspect(result[0].position, content="6")
   }
 }
