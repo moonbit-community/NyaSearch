@@ -1,0 +1,8 @@
+import {
+  "moonbitlang/core/cmp",
+  "moonbitlang/core/int",
+}
+
+options(
+  "is-main": false,
+)

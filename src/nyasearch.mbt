@@ -98,7 +98,6 @@ test "panic search/invalid" {
   let _ = search("hello", "h", start=5, end=3)
   let _ = search("hello", "h", start=-1, end=5)
   let _ = search("hello", "h", start=0, end=6)
-
 }
 
 ///|
