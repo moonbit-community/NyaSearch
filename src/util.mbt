@@ -87,14 +87,14 @@ test "FuzzyMatch::equal/edge_cases" {
   let zero = FuzzyMatch::{ position: 0, score: 0.0, length: 0 }
   let zero_twin = FuzzyMatch::{ position: 0, score: 0.0, length: 0 }
   let max = FuzzyMatch::{
-    position: @int.max_value,
+    position: @int.MAX_VALUE,
     score: 1.0,
-    length: @int.max_value,
+    length: @int.MAX_VALUE,
   }
   let max_twin = FuzzyMatch::{
-    position: @int.max_value,
+    position: @int.MAX_VALUE,
     score: 1.0,
-    length: @int.max_value,
+    length: @int.MAX_VALUE,
   }
   inspect(zero == zero_twin, content="true")
   inspect(max == max_twin, content="true")
