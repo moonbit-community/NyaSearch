@@ -111,7 +111,7 @@ fn jaro_winkler(
   text : String,
   pattern : String,
   options : FuzzyOptions,
-) -> Array[FuzzyMatch] raise Error {
+) -> Array[FuzzyMatch] {
   let result = Array::new()
   let n = text.length()
   let m = pattern.length()
