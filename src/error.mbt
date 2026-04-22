@@ -1,19 +1,19 @@
 ///|
 priv suberror EmptyPatternError {
   EmptyPatternError(String)
-} derive(Show)
+} derive(Debug)
 
 ///|
 priv suberror PatternTooLongError {
   PatternTooLongError(String)
-} derive(Show)
+} derive(Debug)
 
 ///|
 priv suberror OptionChooseError {
   OptionChooseError(String)
-} derive(Show)
+} derive(Debug)
 
 ///|
 priv suberror InvalidRangeError {
   InvalidRangeError(String)
-} derive(Show)
+} derive(Debug)
