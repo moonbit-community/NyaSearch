@@ -15,7 +15,7 @@ fn jaro_winkler_similarity(
     let start = @cmp.maximum(0, i - match_window)
     let end = @cmp.minimum(len2, i + match_window + 1)
     for j = start; j < end; j = j + 1 {
-      if not(match2[j]) && s1.code_unit_at(i) == s2.code_unit_at(j) {
+      if !match2[j] && s1.code_unit_at(i) == s2.code_unit_at(j) {
         match1[i] = true
         match2[j] = true
         matches = matches + 1
@@ -30,7 +30,7 @@ fn jaro_winkler_similarity(
   let mut j = 0
   for i = 0; i < len1; i = i + 1 {
     if match1[i] {
-      while not(match2[j]) {
+      while !match2[j] {
         j = j + 1
       }
       if s1.code_unit_at(i) != s2.code_unit_at(j) {
