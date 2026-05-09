@@ -132,7 +132,7 @@ fn compute_lps(pattern : String) -> Array[Int] {
 ///|
 fn compute_bad_char_table(pattern : String) -> Map[Char, Int] {
   let m = pattern.length()
-  let bad_char = Map::new()
+  let bad_char = Map([], capacity=m)
   let mut j = 0
   while j < m - 1 {
     bad_char.set(Int::unsafe_to_char(pattern.code_unit_at(j).to_int()), j)
@@ -214,7 +214,7 @@ fn auto(text : String, pattern : String) -> Int {
     return brute_force(text, pattern)
   }
   let mut repeats = 0
-  let unique_chars = Set::new()
+  let unique_chars = Set([], capacity=pattern_len)
   for i in 0..<pattern_len {
     if unique_chars.contains(pattern.code_unit_at(i)) {
       repeats += 1
