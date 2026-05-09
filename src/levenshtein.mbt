@@ -110,7 +110,7 @@ fn levenshtein(
   let n = text.length()
   let m = pattern.length()
   for i = 0; i <= n - m; i = i + 1 {
-    let candidate = text[i:i + m].to_string()
+    let candidate = text[i:i + m].to_owned()
     let distance = levenshtein_distance_threshold(
       candidate,
       pattern,

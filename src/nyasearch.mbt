@@ -58,7 +58,7 @@ pub fn search(
       "Invalid search range: ensure start <= end and both are within text bounds",
     )
   }
-  let subtext = text[start:end].to_string()
+  let subtext = text[start:end].to_owned()
   let idx = match option {
     "auto" => auto(subtext, pattern)
     "kmp" => kmp(subtext, pattern)
@@ -192,9 +192,9 @@ pub fn fuzzy_search(
     )
   }
   let search_text = if options.case_sensitive {
-    text[start:end].to_string()
+    text[start:end].to_owned()
   } else {
-    text[start:end].to_string().to_lower()
+    text[start:end].to_owned().to_lower()
   }
   let search_pattern = if options.case_sensitive {
     pattern
