@@ -312,7 +312,7 @@ test "fuzzy_search/text_empty" {
     max_results: 5,
   }
   let result = fuzzy_search("", "Hello", options~)
-  inspect(result, content="[]")
+  inspect(result.length(), content="0")
 }
 
 ///|
@@ -324,5 +324,5 @@ test "panic fuzzy_search/algorithm_error" {
     max_results: 5,
   }
   let result = fuzzy_search("12453", "Hello", algorithm="other", options~)
-  inspect(result, content="[]")
+  inspect(result.length(), content="0")
 }
