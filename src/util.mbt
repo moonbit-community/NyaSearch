@@ -6,7 +6,7 @@ pub struct FuzzyMatch {
 }
 
 ///|
-pub impl Show for FuzzyMatch with output(self, logger) {
+pub impl Show for FuzzyMatch with fn output(self, logger) {
   logger.write_string("FuzzyMatch { position: ")
   logger.write_string(self.position.to_string())
   logger.write_string(", score: ")
@@ -17,7 +17,7 @@ pub impl Show for FuzzyMatch with output(self, logger) {
 }
 
 ///|
-impl Compare for FuzzyMatch with compare(front, after) {
+impl Compare for FuzzyMatch with fn compare(front, after) {
   if front.score == after.score {
     // 分数相同时，比较位置，位置小的排在前面
     if front.position < after.position {
@@ -58,7 +58,7 @@ test "FuzzyMatch::compare/same_score_different_positions" {
 }
 
 ///|
-impl Eq for FuzzyMatch with equal(front, after) {
+impl Eq for FuzzyMatch with fn equal(front, after) {
   front.position == after.position &&
   front.score == after.score &&
   front.length == after.length
