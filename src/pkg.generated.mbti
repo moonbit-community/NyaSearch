@@ -14,6 +14,8 @@ pub struct FuzzyMatch {
   score : Float
   length : Int
 }
+pub fn FuzzyMatch::output(Self, &Logger) -> Unit
+pub fn FuzzyMatch::to_string(Self) -> String
 pub impl Show for FuzzyMatch
 
 pub struct FuzzyOptions {
@@ -34,4 +36,3 @@ pub struct StringHash {
 // Type aliases
 
 // Traits
-
