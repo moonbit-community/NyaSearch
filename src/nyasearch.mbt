@@ -42,10 +42,10 @@
 pub fn search(
   text : String,
   pattern : String,
-  option? : String = "auto",
-  start? : Int = 0,
-  end? : Int,
-) -> Int raise Error {
+  option~ : String = "auto",
+  start~ : Int32 = 0,
+  end? : Int32,
+) -> Int32 raise Error {
   let end = end.unwrap_or(text.length())
   if pattern.is_empty() {
     raise EmptyPatternError("Empty search pattern is not allowed")
@@ -171,15 +171,15 @@ test "panic search/invalid_range" {
 pub fn fuzzy_search(
   text : String,
   pattern : String,
-  algorithm? : String = "levenshtein",
-  options? : FuzzyOptions = {
+  algorithm~ : String = "levenshtein",
+  options~ : FuzzyOptions = {
     threshold: 0.7,
     max_distance: 2,
     case_sensitive: false,
     max_results: 10,
   },
-  start? : Int = 0,
-  end? : Int,
+  start~ : Int32 = 0,
+  end? : Int32,
 ) -> Array[FuzzyMatch] raise Error {
   let end = end.unwrap_or(text.length())
   if pattern.is_empty() {

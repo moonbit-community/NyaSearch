@@ -1,6 +1,6 @@
 ///|
 pub struct StringHash {
-  n : Int
+  n : Int32
   mod : Int64
   base : Int64
   hash : Array[Int64]
@@ -9,8 +9,8 @@ pub struct StringHash {
 
 ///|
 fn StringHash::new(
-  mod? : Int64 = 998244353,
-  base? : Int64 = 131,
+  mod~ : Int64 = 998244353,
+  base~ : Int64 = 131,
   s : String,
 ) -> StringHash {
   let n = s.length()
@@ -26,11 +26,15 @@ fn StringHash::new(
       ) %
       mod
   }
-  StringHash::{ n, mod, base, hash: h, p } // 直接传入p数组
+  StringHash::{ n, mod, base, hash: h, p, } // 直接传入p数组
 }
 
 ///|
-fn StringHash::get_hash(self : StringHash, left : Int, right : Int) -> Int64 {
+fn StringHash::get_hash(
+  self : StringHash,
+  left : Int32,
+  right : Int32,
+) -> Int64 {
   // 直接使用p数组，无需匹配模式
   (
     self.hash[right + 1] -
@@ -41,7 +45,7 @@ fn StringHash::get_hash(self : StringHash, left : Int, right : Int) -> Int64 {
 }
 
 ///|
-fn rabin_karp(text : String, pattern : String) -> Int {
+fn rabin_karp(text : String, pattern : String) -> Int32 {
   let n = text.length()
   let m = pattern.length()
   if m == 0 || n == 0 || m > n {

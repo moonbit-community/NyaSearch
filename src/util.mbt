@@ -1,12 +1,12 @@
 ///|
 pub struct FuzzyMatch {
-  position : Int
+  position : Int32
   score : Float
-  length : Int
+  length : Int32
 }
 
 ///|
-pub impl Show for FuzzyMatch with output(self, logger) {
+pub impl Show for FuzzyMatch with fn output(self, logger) {
   logger.write_string("FuzzyMatch { position: ")
   logger.write_string(self.position.to_string())
   logger.write_string(", score: ")
@@ -17,7 +17,7 @@ pub impl Show for FuzzyMatch with output(self, logger) {
 }
 
 ///|
-impl Compare for FuzzyMatch with compare(front, after) {
+impl Compare for FuzzyMatch with fn compare(front, after) {
   if front.score == after.score {
     // 分数相同时，比较位置，位置小的排在前面
     if front.position < after.position {
@@ -36,29 +36,29 @@ impl Compare for FuzzyMatch with compare(front, after) {
 
 ///|
 test "FuzzyMatch::compare/equal_positions" {
-  let fm1 = FuzzyMatch::{ position: 5, score: 0.8, length: 3 }
-  let fm2 = FuzzyMatch::{ position: 5, score: 0.8, length: 4 }
+  let fm1 = FuzzyMatch::{ position: 5, score: 0.8, length: 3, }
+  let fm2 = FuzzyMatch::{ position: 5, score: 0.8, length: 4, }
   inspect(fm1.compare(fm2), content="0")
 }
 
 ///|
 test "FuzzyMatch::compare/different_scores" {
-  let fm1 = FuzzyMatch::{ position: 2, score: 0.9, length: 3 }
-  let fm2 = FuzzyMatch::{ position: 3, score: 0.7, length: 4 }
+  let fm1 = FuzzyMatch::{ position: 2, score: 0.9, length: 3, }
+  let fm2 = FuzzyMatch::{ position: 3, score: 0.7, length: 4, }
   inspect(fm1.compare(fm2), content="-1")
   inspect(fm2.compare(fm1), content="1")
 }
 
 ///|
 test "FuzzyMatch::compare/same_score_different_positions" {
-  let fm1 = FuzzyMatch::{ position: 1, score: 0.8, length: 3 }
-  let fm2 = FuzzyMatch::{ position: 2, score: 0.8, length: 4 }
+  let fm1 = FuzzyMatch::{ position: 1, score: 0.8, length: 3, }
+  let fm2 = FuzzyMatch::{ position: 2, score: 0.8, length: 4, }
   inspect(fm1.compare(fm2), content="-1")
   inspect(fm2.compare(fm1), content="1")
 }
 
 ///|
-impl Eq for FuzzyMatch with equal(front, after) {
+impl Eq for FuzzyMatch with fn equal(front, after) {
   front.position == after.position &&
   front.score == after.score &&
   front.length == after.length
@@ -66,17 +66,17 @@ impl Eq for FuzzyMatch with equal(front, after) {
 
 ///|
 test "FuzzyMatch::equal/identical" {
-  let m1 = FuzzyMatch::{ position: 0, score: 1.0, length: 5 }
-  let m2 = FuzzyMatch::{ position: 0, score: 1.0, length: 5 }
+  let m1 = FuzzyMatch::{ position: 0, score: 1.0, length: 5, }
+  let m2 = FuzzyMatch::{ position: 0, score: 1.0, length: 5, }
   inspect(m1 == m2, content="true")
 }
 
 ///|
 test "FuzzyMatch::equal/different" {
-  let base = FuzzyMatch::{ position: 0, score: 1.0, length: 5 }
-  let pos_diff = FuzzyMatch::{ position: 1, score: 1.0, length: 5 }
-  let score_diff = FuzzyMatch::{ position: 0, score: 0.9, length: 5 }
-  let len_diff = FuzzyMatch::{ position: 0, score: 1.0, length: 4 }
+  let base = FuzzyMatch::{ position: 0, score: 1.0, length: 5, }
+  let pos_diff = FuzzyMatch::{ position: 1, score: 1.0, length: 5, }
+  let score_diff = FuzzyMatch::{ position: 0, score: 0.9, length: 5, }
+  let len_diff = FuzzyMatch::{ position: 0, score: 1.0, length: 4, }
   inspect(base == pos_diff, content="false")
   inspect(base == score_diff, content="false")
   inspect(base == len_diff, content="false")
@@ -84,8 +84,8 @@ test "FuzzyMatch::equal/different" {
 
 ///|
 test "FuzzyMatch::equal/edge_cases" {
-  let zero = FuzzyMatch::{ position: 0, score: 0.0, length: 0 }
-  let zero_twin = FuzzyMatch::{ position: 0, score: 0.0, length: 0 }
+  let zero = FuzzyMatch::{ position: 0, score: 0.0, length: 0, }
+  let zero_twin = FuzzyMatch::{ position: 0, score: 0.0, length: 0, }
   let max = FuzzyMatch::{
     position: @int.MAX_VALUE,
     score: 1.0,
@@ -103,13 +103,13 @@ test "FuzzyMatch::equal/edge_cases" {
 ///|
 pub struct FuzzyOptions {
   threshold : Float
-  max_distance : Int
+  max_distance : Int32
   case_sensitive : Bool
-  max_results : Int
+  max_results : Int32
 }
 
 ///|
-fn compute_lps(pattern : String) -> Array[Int] {
+fn compute_lps(pattern : String) -> Array[Int32] {
   let m = pattern.length()
   let lps = Array::make(m, 0)
   let mut i = 1
@@ -130,19 +130,19 @@ fn compute_lps(pattern : String) -> Array[Int] {
 }
 
 ///|
-fn compute_bad_char_table(pattern : String) -> Map[Char, Int] {
+fn compute_bad_char_table(pattern : String) -> Map[Char, Int32] {
   let m = pattern.length()
   let bad_char = Map([], capacity=m)
   let mut j = 0
   while j < m - 1 {
-    bad_char.set(Int::unsafe_to_char(pattern.code_unit_at(j).to_int()), j)
+    bad_char.set(Int32::unsafe_to_char(pattern.code_unit_at(j).to_int()), j)
     j += 1
   }
   return bad_char
 }
 
 ///|
-fn bad_char_shift(bad_char : Map[Char, Int], c : Char, j : Int) -> Int {
+fn bad_char_shift(bad_char : Map[Char, Int32], c : Char, j : Int32) -> Int32 {
   match bad_char.get(c) {
     Some(bc_pos) => @cmp.maximum(1, j - bc_pos)
     None => j + 1
@@ -150,7 +150,7 @@ fn bad_char_shift(bad_char : Map[Char, Int], c : Char, j : Int) -> Int {
 }
 
 ///|
-fn compute_suffix_array(pattern : String, suffix : Array[Int]) -> Unit {
+fn compute_suffix_array(pattern : String, suffix : Array[Int32]) -> Unit {
   let m = pattern.length()
   suffix[m - 1] = m
   let mut g = m - 1
@@ -175,7 +175,7 @@ fn compute_suffix_array(pattern : String, suffix : Array[Int]) -> Unit {
 }
 
 ///|
-fn compute_good_suffix_table(pattern : String) -> Array[Int] {
+fn compute_good_suffix_table(pattern : String) -> Array[Int32] {
   let m = pattern.length()
   let suffix = Array::make(m, 0)
   let good_suffix = Array::make(m, 0)
@@ -207,7 +207,7 @@ fn compute_good_suffix_table(pattern : String) -> Array[Int] {
 }
 
 ///|
-fn auto(text : String, pattern : String) -> Int {
+fn auto(text : String, pattern : String) -> Int32 {
   let text_len = text.length()
   let pattern_len = pattern.length()
   if pattern_len <= 2 || text_len <= 10 {

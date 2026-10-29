@@ -2,8 +2,8 @@
 fn jaro_winkler_similarity(
   s1 : String,
   s2 : String,
-  prefix_scale? : Float = 0.1,
-  prefix_max? : Int = 4,
+  prefix_scale~ : Float = 0.1,
+  prefix_max~ : Int32 = 4,
 ) -> Float {
   let len1 = s1.length()
   let len2 = s2.length()
@@ -112,21 +112,21 @@ fn jaro_winkler(
   pattern : String,
   options : FuzzyOptions,
 ) -> Array[FuzzyMatch] {
-  let result = Array::new()
+  let result = Array()
   let n = text.length()
   let m = pattern.length()
   let max_window = m + options.max_distance
   for i = 0; i <= n - m; i = i + 1 {
     let exact_candidate = text[i:i + m].to_owned()
     if exact_candidate == pattern {
-      result.push(FuzzyMatch::{ position: i, score: 1.0, length: m })
+      result.push(FuzzyMatch::{ position: i, score: 1.0, length: m, })
       continue
     }
     let window_end = @cmp.minimum(i + max_window, n)
     let candidate = text[i:window_end].to_owned()
     let similarity = jaro_winkler_similarity(candidate, pattern)
     if similarity >= options.threshold {
-      result.push(FuzzyMatch::{ position: i, score: similarity, length: m })
+      result.push(FuzzyMatch::{ position: i, score: similarity, length: m, })
     }
   }
   result.sort()
