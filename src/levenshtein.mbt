@@ -2,8 +2,8 @@
 fn levenshtein_distance_threshold(
   s : String,
   t : String,
-  threshold : Int,
-) -> Int {
+  threshold : Int32,
+) -> Int32 {
   let m = s.length()
   let n = t.length()
   if (m - n).abs() > threshold {
@@ -106,7 +106,7 @@ fn levenshtein(
   pattern : String,
   options : FuzzyOptions,
 ) -> Array[FuzzyMatch] {
-  let result = Array::new()
+  let result = Array()
   let n = text.length()
   let m = pattern.length()
   for i = 0; i <= n - m; i = i + 1 {
@@ -120,7 +120,7 @@ fn levenshtein(
       let max_len = Float::from_int(@cmp.maximum(m, candidate.length()))
       let score = Float::from_int(1) - Float::from_int(distance) / max_len
       if score >= options.threshold {
-        result.push(FuzzyMatch::{ position: i, score, length: m })
+        result.push(FuzzyMatch::{ position: i, score, length: m, })
       }
     }
   }
@@ -187,7 +187,7 @@ test "levenshtein_fuzzy_search/max_results_limit" {
 
   // 2. 测试在长结果数组上的截断逻辑
   // 为此我们临时增加测试
-  let temp_result = Array::new()
+  let temp_result = Array()
   for i = 0; i < 5; i = i + 1 {
     temp_result.push(FuzzyMatch::{
       position: i,
@@ -199,7 +199,7 @@ test "levenshtein_fuzzy_search/max_results_limit" {
   // 创建一个临时函数模拟结果处理
   let truncate_results = fn(
     arr : Array[FuzzyMatch],
-    max : Int,
+    max : Int32,
   ) -> Array[FuzzyMatch] {
     arr.sort()
     if arr.length() > max {

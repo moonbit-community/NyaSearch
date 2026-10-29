@@ -2,29 +2,31 @@
 package "xunyoyo/NyaSearch"
 
 // Values
-pub fn fuzzy_search(String, String, algorithm? : String, options? : FuzzyOptions, start? : Int, end? : Int) -> Array[FuzzyMatch] raise
+pub fn fuzzy_search(String, String, algorithm? : String, options? : FuzzyOptions, start? : Int32, end? : Int32) -> Array[FuzzyMatch] raise
 
-pub fn search(String, String, option? : String, start? : Int, end? : Int) -> Int raise
+pub fn search(String, String, option? : String, start? : Int32, end? : Int32) -> Int32 raise
 
 // Errors
 
 // Types and methods
 pub struct FuzzyMatch {
-  position : Int
+  position : Int32
   score : Float
-  length : Int
+  length : Int32
 }
+pub fn FuzzyMatch::output(Self, &Logger) -> Unit
+pub fn FuzzyMatch::to_string(Self) -> String
 pub impl Show for FuzzyMatch
 
 pub struct FuzzyOptions {
   threshold : Float
-  max_distance : Int
+  max_distance : Int32
   case_sensitive : Bool
-  max_results : Int
+  max_results : Int32
 }
 
 pub struct StringHash {
-  n : Int
+  n : Int32
   mod : Int64
   base : Int64
   hash : Array[Int64]
@@ -34,4 +36,3 @@ pub struct StringHash {
 // Type aliases
 
 // Traits
-

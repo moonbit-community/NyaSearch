@@ -1,5 +1,5 @@
 ///|
-fn brute_force(text : String, pattern : String) -> Int {
+fn brute_force(text : String, pattern : String) -> Int32 {
   let text_len = text.length()
   let pattern_len = pattern.length()
   for i = 0; i < text_len - pattern_len + 1; i = i + 1 {

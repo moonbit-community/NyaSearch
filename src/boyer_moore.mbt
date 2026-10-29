@@ -1,5 +1,5 @@
 ///|
-fn boyer_moore(text : String, pattern : String) -> Int {
+fn boyer_moore(text : String, pattern : String) -> Int32 {
   let n = text.length()
   let m = pattern.length()
   if m == 0 || n == 0 || m > n {
